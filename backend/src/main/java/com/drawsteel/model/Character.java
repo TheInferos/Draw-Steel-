@@ -69,5 +69,4 @@ public class Character {
     @Column(nullable = false)
     private Integer presence = 0;
 
-
 }
