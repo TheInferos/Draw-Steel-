@@ -18,8 +18,8 @@ import lombok.Builder;
 @Builder
 public class Character {
     
-    private static final int MIN_CHARECTISTIC_SCORE = -5;
-    private static final int MAX_CHARECTISTIC_SCORE = 5;
+    private static final int MIN_CHARACTERISTIC_SCORE = -5;
+    private static final int MAX_CHARACTERISTIC_SCORE = 5;
 
 
     @Id
@@ -34,39 +34,45 @@ public class Character {
     private String description;
     
     @NotNull
-    @Min(MIN_CHARECTISTIC_SCORE)
-    @Max(MAX_CHARECTISTIC_SCORE)
+    @Min(MIN_CHARACTERISTIC_SCORE)
+    @Max(MAX_CHARACTERISTIC_SCORE)
     @Column(nullable = false)
+    @Builder.Default
     private Integer level = 1;
     
     @NotNull
-    @Min(MIN_CHARECTISTIC_SCORE)
-    @Max(MAX_CHARECTISTIC_SCORE)
+    @Min(MIN_CHARACTERISTIC_SCORE)
+    @Max(MAX_CHARACTERISTIC_SCORE)
     @Column(nullable = false)
+    @Builder.Default
     private Integer might = 0;
     
     @NotNull
-    @Min(MIN_CHARECTISTIC_SCORE)
-    @Max(MAX_CHARECTISTIC_SCORE)
+    @Min(MIN_CHARACTERISTIC_SCORE)
+    @Max(MAX_CHARACTERISTIC_SCORE)
     @Column(nullable = false)
+    @Builder.Default
     private Integer agility = 0;
     
     @NotNull
-    @Min(MIN_CHARECTISTIC_SCORE)
-    @Max(MAX_CHARECTISTIC_SCORE)
+    @Min(MIN_CHARACTERISTIC_SCORE)
+    @Max(MAX_CHARACTERISTIC_SCORE)
     @Column(nullable = false)
+    @Builder.Default
     private Integer reason = 0;
     
     @NotNull
-    @Min(MIN_CHARECTISTIC_SCORE)
-    @Max(MAX_CHARECTISTIC_SCORE)
+    @Min(MIN_CHARACTERISTIC_SCORE)
+    @Max(MAX_CHARACTERISTIC_SCORE)
     @Column(nullable = false)
+    @Builder.Default
     private Integer intuition = 0;
     
     @NotNull
-    @Min(MIN_CHARECTISTIC_SCORE)
-    @Max(MAX_CHARECTISTIC_SCORE)
+    @Min(MIN_CHARACTERISTIC_SCORE)
+    @Max(MAX_CHARACTERISTIC_SCORE)
     @Column(nullable = false)
+    @Builder.Default
     private Integer presence = 0;
 
 }
