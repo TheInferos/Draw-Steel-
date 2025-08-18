@@ -44,6 +44,7 @@ public class CharacterService {
             existingCharacter.setIntuition(characterDetails.getIntuition());
             existingCharacter.setPresence(characterDetails.getPresence());
             existingCharacter.setSpeed(characterDetails.getSpeed());
+            existingCharacter.setStability(characterDetails.getStability());
             return characterRepository.save(existingCharacter);
         }
         throw new RuntimeException("Character not found with id: " + id);

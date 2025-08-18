@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/traits")
@@ -34,16 +35,24 @@ public class TraitController {
     }
     
     @PostMapping
-    public ResponseEntity<Trait> createTrait(@RequestBody Trait trait) {
-        Trait createdTrait = traitService.createTrait(trait);
-        return ResponseEntity.ok(createdTrait);
+    public ResponseEntity<?> createTrait(@RequestBody Trait trait) {
+        try {
+            Trait createdTrait = traitService.createTrait(trait);
+            return ResponseEntity.ok(createdTrait);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Trait> updateTrait(@PathVariable UUID id, @RequestBody Trait traitDetails) {
+    public ResponseEntity<?> updateTrait(@PathVariable UUID id, @RequestBody Trait traitDetails) {
         try {
             Trait updatedTrait = traitService.updateTrait(id, traitDetails);
             return ResponseEntity.ok(updatedTrait);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

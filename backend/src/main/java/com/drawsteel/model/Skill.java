@@ -4,15 +4,14 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "ancestries")
+@Table(name = "skills")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ancestry {
+public class Skill {
     
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -24,9 +23,4 @@ public class Ancestry {
     @Column(columnDefinition = "TEXT")
     private String description;
     
-    @Column(nullable = false)
-    private Integer baseHealth;
-    
-    @OneToMany(mappedBy = "ancestry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Trait> traits;
 }

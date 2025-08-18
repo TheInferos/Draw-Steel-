@@ -27,6 +27,10 @@ public class TraitService {
     }
     
     public Trait createTrait(Trait trait) {
+        // Check if trait with the same name already exists
+        if (traitRepository.findByName(trait.getName()).isPresent()) {
+            throw new IllegalArgumentException("Trait with name '" + trait.getName() + "' already exists");
+        }
         return traitRepository.save(trait);
     }
     
@@ -34,10 +38,19 @@ public class TraitService {
         Optional<Trait> optionalTrait = traitRepository.findById(id);
         if (optionalTrait.isPresent()) {
             Trait existingTrait = optionalTrait.get();
+            
+            // Check if the new name conflicts with another trait (excluding the current one)
+            Optional<Trait> existingWithName = traitRepository.findByName(traitDetails.getName());
+            if (existingWithName.isPresent() && !existingWithName.get().getId().equals(id)) {
+                throw new IllegalArgumentException("Trait with name '" + traitDetails.getName() + "' already exists");
+            }
+            
             existingTrait.setName(traitDetails.getName());
             existingTrait.setDescription(traitDetails.getDescription());
             existingTrait.setCost(traitDetails.getCost());
             existingTrait.setSignatureToggle(traitDetails.getSignatureToggle());
+            existingTrait.setTraitType(traitDetails.getTraitType());
+            existingTrait.setEffect(traitDetails.getEffect());
             existingTrait.setAncestry(traitDetails.getAncestry());
             return traitRepository.save(existingTrait);
         }
