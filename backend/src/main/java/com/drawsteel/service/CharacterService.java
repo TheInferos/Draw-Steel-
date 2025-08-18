@@ -37,6 +37,9 @@ public class CharacterService {
             existingCharacter.setName(characterDetails.getName());
             existingCharacter.setDescription(characterDetails.getDescription());
             existingCharacter.setAncestry(characterDetails.getAncestry());
+            existingCharacter.setCulture(characterDetails.getCulture());
+            existingCharacter.setCareer(characterDetails.getCareer());
+            existingCharacter.setKit(characterDetails.getKit());
             existingCharacter.setLevel(characterDetails.getLevel());
             existingCharacter.setMight(characterDetails.getMight());
             existingCharacter.setAgility(characterDetails.getAgility());

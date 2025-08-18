@@ -54,6 +54,10 @@ public class Character {
     @JoinColumn(name = "career_id")
     private Career career;
     
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "kit_id")
+    private Kit kit;
+    
     @NotNull
     @Min(MIN_CHARACTERISTIC_SCORE)
     @Max(MAX_CHARACTERISTIC_SCORE)
