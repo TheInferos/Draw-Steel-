@@ -1,22 +1,26 @@
 # Database configuration
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ""
+    url: jdbc:postgresql://localhost:5432/drawsteeldb
+    driver-class-name: org.postgresql.Driver
+    username: drawsteel
+    password: drawsteel123
   
   # JPA configuration
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   
-  # H2 Console
+  # H2 Console (disabled for production)
   h2:
     console:
-      enabled: true
+      enabled: false
 
 # Server configuration
 server:
