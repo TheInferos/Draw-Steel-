@@ -29,4 +29,19 @@ public class Career {
     @JoinColumn(name = "skill_id")
     private List<Skill> skills;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "trait_id")
+    private List<Language> languages;
+
+    @Column(nullable = false)
+    private int renown;
+
+    @Column(nullable = false)
+    private int wealth;
+
+    @Column(nullable = false)
+    private int projectPoints;
+
+    @Column(nullable = false)
+    private List<String> perks;
 }
