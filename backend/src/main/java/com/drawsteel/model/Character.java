@@ -30,7 +30,7 @@ public class Character {
     private static final int MIN_LEVEL = 1;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     
     @NotBlank
@@ -40,7 +40,7 @@ public class Character {
     @Column(columnDefinition = "TEXT")
     private String description;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ancestry_id")
     private Ancestry ancestry;
     
