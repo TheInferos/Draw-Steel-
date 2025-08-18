@@ -12,7 +12,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Ancestry {
+public class Ancestry {
     
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -24,11 +24,15 @@ public abstract class Ancestry {
     @Column(columnDefinition = "TEXT")
     private String description;
     
+    @Column(nullable = false)
+    private String ancestryType;
+    
+    @Column(nullable = false)
+    private Integer baseHealth;
+    
+    @Column(nullable = false)
+    private Integer baseMana;
+    
     @OneToMany(mappedBy = "ancestry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Trait> traits;
-    
-    // Abstract methods that subclasses must implement
-    public abstract String getAncestryType();
-    public abstract int getBaseHealth();
-    public abstract int getBaseMana();
 }

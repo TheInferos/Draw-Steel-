@@ -11,7 +11,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Trait {
+public class Trait {
     
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,12 +29,13 @@ public abstract class Trait {
     @Column(nullable = false)
     private Boolean signatureToggle;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    private String traitType;
+    
+    @Column(columnDefinition = "TEXT")
+    private String effect;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ancestry_id")
     private Ancestry ancestry;
-    
-    // Abstract methods that subclasses must implement
-    public abstract String getTraitType();
-    
-    public abstract String getEffect();
 }
