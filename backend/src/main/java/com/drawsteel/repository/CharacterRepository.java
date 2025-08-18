@@ -7,6 +7,4 @@ import java.util.UUID;
 
 @Repository
 public interface CharacterRepository extends JpaRepository<Character, UUID> {
-    // Custom query methods can be added here
-    // Spring Data JPA will automatically implement basic CRUD operations
 }

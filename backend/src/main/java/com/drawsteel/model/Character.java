@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
+import com.drawsteel.model.Skill;
 
 @Entity
 @Table(name = "characters")
@@ -43,6 +46,14 @@ public class Character {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ancestry_id")
     private Ancestry ancestry;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "culture_id")
+    private Culture culture;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "career_id")
+    private Career career;
     
     @NotNull
     @Min(MIN_CHARACTERISTIC_SCORE)
@@ -96,4 +107,17 @@ public class Character {
     @Builder.Default
     private Integer stability = BASE_SPEED;
 
+    public List<Skill> getAllSkills() {
+        List<Skill> allSkills = new ArrayList<>();
+        
+        if (culture != null && culture.getSkill() != null) {
+            allSkills.add(culture.getSkill());
+        }
+        
+        if (career != null && career.getSkills() != null) {
+            allSkills.addAll(career.getSkills());
+        }
+        
+        return allSkills;
+    }
 }

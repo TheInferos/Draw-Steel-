@@ -8,12 +8,10 @@ import java.util.UUID;
 
 @Repository
 public interface TraitRepository extends JpaRepository<Trait, UUID> {
-    // Find traits by ancestry
+
     List<Trait> findByAncestryId(UUID ancestryId);
     
-    // Find traits by cost
     List<Trait> findByCost(Integer cost);
     
-    // Find traits by signature toggle
     List<Trait> findBySignatureToggle(Boolean signatureToggle);
 }
