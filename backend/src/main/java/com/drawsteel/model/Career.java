@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
 import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "careers")
@@ -25,13 +25,21 @@ public class Career {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "skill_id")
-    private List<Skill> skills;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "career_skills",
+        joinColumns = @JoinColumn(name = "career_id"),
+        inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    private List<Skill> skills = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "trait_id")
-    private List<Language> languages;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "career_languages",
+        joinColumns = @JoinColumn(name = "career_id"),
+        inverseJoinColumns = @JoinColumn(name = "language_id")
+    )
+    private List<Language> languages = new ArrayList<>();
 
     @Column(nullable = false)
     private int renown;
@@ -42,6 +50,8 @@ public class Career {
     @Column(nullable = false)
     private int projectPoints;
 
-    @Column(nullable = false)
-    private List<String> perks;
+    @ElementCollection
+    @CollectionTable(name = "career_perks", joinColumns = @JoinColumn(name = "career_id"))
+    @Column(name = "perk")
+    private List<String> perks = new ArrayList<>();
 }

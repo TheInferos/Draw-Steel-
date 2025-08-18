@@ -25,13 +25,7 @@ public class Ancestry {
     private String description;
     
     @Column(nullable = false)
-    private String ancestryType;
-    
-    @Column(nullable = false)
     private Integer baseHealth;
-    
-    @Column(nullable = false)
-    private Integer baseMana;
     
     @OneToMany(mappedBy = "ancestry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Trait> traits;

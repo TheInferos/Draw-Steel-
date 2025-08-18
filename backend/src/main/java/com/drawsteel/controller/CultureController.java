@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cultures")
@@ -34,19 +35,27 @@ public class CultureController {
     }
     
     @PostMapping
-    public ResponseEntity<Culture> createCulture(@RequestBody Culture culture) {
-        Culture savedCulture = cultureService.saveCulture(culture);
-        return ResponseEntity.ok(savedCulture);
+    public ResponseEntity<?> createCulture(@RequestBody Culture culture) {
+        try {
+            Culture createdCulture = cultureService.createCulture(culture);
+            return ResponseEntity.ok(createdCulture);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Culture> updateCulture(@PathVariable UUID id, @RequestBody Culture culture) {
-        if (!cultureService.getCultureById(id).isPresent()) {
+    public ResponseEntity<?> updateCulture(@PathVariable UUID id, @RequestBody Culture cultureDetails) {
+        try {
+            Culture updatedCulture = cultureService.updateCulture(id, cultureDetails);
+            return ResponseEntity.ok(updatedCulture);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-        culture.setId(id);
-        Culture updatedCulture = cultureService.saveCulture(culture);
-        return ResponseEntity.ok(updatedCulture);
     }
     
     @DeleteMapping("/{id}")

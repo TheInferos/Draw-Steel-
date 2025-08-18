@@ -27,6 +27,10 @@ public class AncestryService {
     }
     
     public Ancestry createAncestry(Ancestry ancestry) {
+        // Check if ancestry with the same name already exists
+        if (ancestryRepository.findByName(ancestry.getName()).isPresent()) {
+            throw new IllegalArgumentException("Ancestry with name '" + ancestry.getName() + "' already exists");
+        }
         return ancestryRepository.save(ancestry);
     }
     
@@ -34,8 +38,16 @@ public class AncestryService {
         Optional<Ancestry> optionalAncestry = ancestryRepository.findById(id);
         if (optionalAncestry.isPresent()) {
             Ancestry existingAncestry = optionalAncestry.get();
+            
+            // Check if the new name conflicts with another ancestry (excluding the current one)
+            Optional<Ancestry> existingWithName = ancestryRepository.findByName(ancestryDetails.getName());
+            if (existingWithName.isPresent() && !existingWithName.get().getId().equals(id)) {
+                throw new IllegalArgumentException("Ancestry with name '" + ancestryDetails.getName() + "' already exists");
+            }
+            
             existingAncestry.setName(ancestryDetails.getName());
             existingAncestry.setDescription(ancestryDetails.getDescription());
+            existingAncestry.setBaseHealth(ancestryDetails.getBaseHealth());
             existingAncestry.setTraits(ancestryDetails.getTraits());
             return ancestryRepository.save(existingAncestry);
         }

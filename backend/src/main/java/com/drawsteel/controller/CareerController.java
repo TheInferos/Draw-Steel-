@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/careers")
@@ -34,19 +35,27 @@ public class CareerController {
     }
     
     @PostMapping
-    public ResponseEntity<Career> createCareer(@RequestBody Career career) {
-        Career savedCareer = careerService.saveCareer(career);
-        return ResponseEntity.ok(savedCareer);
+    public ResponseEntity<?> createCareer(@RequestBody Career career) {
+        try {
+            Career createdCareer = careerService.createCareer(career);
+            return ResponseEntity.ok(createdCareer);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Career> updateCareer(@PathVariable UUID id, @RequestBody Career career) {
-        if (!careerService.getCareerById(id).isPresent()) {
+    public ResponseEntity<?> updateCareer(@PathVariable UUID id, @RequestBody Career careerDetails) {
+        try {
+            Career updatedCareer = careerService.updateCareer(id, careerDetails);
+            return ResponseEntity.ok(updatedCareer);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-        career.setId(id);
-        Career updatedCareer = careerService.saveCareer(career);
-        return ResponseEntity.ok(updatedCareer);
     }
     
     @DeleteMapping("/{id}")

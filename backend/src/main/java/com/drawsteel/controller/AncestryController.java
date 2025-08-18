@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ancestries")
@@ -34,16 +35,24 @@ public class AncestryController {
     }
     
     @PostMapping
-    public ResponseEntity<Ancestry> createAncestry(@RequestBody Ancestry ancestry) {
-        Ancestry createdAncestry = ancestryService.createAncestry(ancestry);
-        return ResponseEntity.ok(createdAncestry);
+    public ResponseEntity<?> createAncestry(@RequestBody Ancestry ancestry) {
+        try {
+            Ancestry createdAncestry = ancestryService.createAncestry(ancestry);
+            return ResponseEntity.ok(createdAncestry);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Ancestry> updateAncestry(@PathVariable UUID id, @RequestBody Ancestry ancestryDetails) {
+    public ResponseEntity<?> updateAncestry(@PathVariable UUID id, @RequestBody Ancestry ancestryDetails) {
         try {
             Ancestry updatedAncestry = ancestryService.updateAncestry(id, ancestryDetails);
             return ResponseEntity.ok(updatedAncestry);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
