@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.util.UUID;
 
 @Entity
 @Table(name = "traits")
@@ -13,8 +14,8 @@ import lombok.AllArgsConstructor;
 public abstract class Trait {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     
     @Column(nullable = false, unique = true)
     private String name;
