@@ -1,0 +1,25 @@
+version: '3.8'
+
+name: drawsteel
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: drawsteel-postgres
+    environment:
+      POSTGRES_DB: drawsteeldb
+      POSTGRES_USER: drawsteel
+      POSTGRES_PASSWORD: drawsteel123
+    ports:
+      - "5432:5432"
+    volumes:
+      - drawsteel_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U drawsteel -d drawsteeldb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  drawsteel_postgres_data:
