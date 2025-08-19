@@ -1,9 +1,11 @@
 package com.drawsteel.service;
 
 import com.drawsteel.model.Kit;
+import com.drawsteel.model.Ability;
 import com.drawsteel.model.enums.Armor;
 import com.drawsteel.model.enums.Weapon;
 import com.drawsteel.repository.KitRepository;
+import com.drawsteel.repository.AbilityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,10 +16,12 @@ import java.util.UUID;
 public class KitService {
     
     private final KitRepository kitRepository;
+    private final AbilityRepository abilityRepository;
     
     @Autowired
-    public KitService(KitRepository kitRepository) {
+    public KitService(KitRepository kitRepository, AbilityRepository abilityRepository) {
         this.kitRepository = kitRepository;
+        this.abilityRepository = abilityRepository;
     }
     
     public List<Kit> getAllKits() {
@@ -37,6 +41,9 @@ public class KitService {
         // Validate armor and weapon enum values
         validateKitEnums(kit);
         
+        // Validate signature ability if provided
+        validateSignatureAbility(kit);
+        
         return kitRepository.save(kit);
     }
     
@@ -53,6 +60,9 @@ public class KitService {
             
             // Validate armor and weapon enum values
             validateKitEnums(kitDetails);
+            
+            // Validate signature ability if provided
+            validateSignatureAbility(kitDetails);
             
             existingKit.setName(kitDetails.getName());
             existingKit.setDescription(kitDetails.getDescription());
@@ -75,7 +85,7 @@ public class KitService {
     public void deleteKit(UUID id) {
         kitRepository.deleteById(id);
     }
-    
+
     /**
      * Validates that the kit's armor and weapon values are valid enum values
      */
@@ -100,6 +110,20 @@ public class KitService {
             Weapon.valueOf(kit.getWeapon().name());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid weapon value: " + kit.getWeapon());
+        }
+    }
+
+    
+    private void validateSignatureAbility(Kit kit) {
+        if (kit.getSignatureAbility() != null) {
+            Optional<Ability> ability = abilityRepository.findById(kit.getSignatureAbility().getId());
+            if (ability.isEmpty()) {
+                throw new IllegalArgumentException("Signature ability not found with id: " + kit.getSignatureAbility().getId());
+            }
+            
+            if (!ability.get().getSignature()) {
+                throw new IllegalArgumentException("Ability with id " + kit.getSignatureAbility().getId() + " is not a signature ability");
+            }
         }
     }
 }
