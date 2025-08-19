@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import com.drawsteel.model.Ability;
+import com.drawsteel.model.Complication;
 import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
@@ -122,6 +123,15 @@ public class Character {
     @Builder.Default
     private Set<Ability> abilities = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "character_complications",
+        joinColumns = @JoinColumn(name = "character_id"),
+        inverseJoinColumns = @JoinColumn(name = "complication_id")
+    )
+    @Builder.Default
+    private Set<Complication> complications = new HashSet<>();
+
     public List<Skill> getAllSkills() {
         List<Skill> allSkills = new ArrayList<>();
         
@@ -177,6 +187,50 @@ public class Character {
         }
         return abilities.stream()
                 .filter(ability -> ability.getType() == type)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public void addComplication(Complication complication) {
+        if (complications == null) {
+            complications = new HashSet<>();
+        }
+        complications.add(complication);
+    }
+
+    public void removeComplication(Complication complication) {
+        if (complications != null) {
+            complications.remove(complication);
+        }
+    }
+
+    public boolean hasComplication(Complication complication) {
+        return complications != null && complications.contains(complication);
+    }
+
+    public List<Complication> getComplicationsWithBenefit() {
+        if (complications == null) {
+            return new ArrayList<>();
+        }
+        return complications.stream()
+                .filter(complication -> complication.getBenefit() != null && !complication.getBenefit().trim().isEmpty())
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public List<Complication> getComplicationsWithDrawback() {
+        if (complications == null) {
+            return new ArrayList<>();
+        }
+        return complications.stream()
+                .filter(complication -> complication.getDrawback() != null && !complication.getDrawback().trim().isEmpty())
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public List<Complication> getComplicationsWithCombinedBenefitDrawback() {
+        if (complications == null) {
+            return new ArrayList<>();
+        }
+        return complications.stream()
+                .filter(complication -> complication.getCombinedBenefitDrawback() != null && !complication.getCombinedBenefitDrawback().trim().isEmpty())
                 .collect(java.util.stream.Collectors.toList());
     }
 }
