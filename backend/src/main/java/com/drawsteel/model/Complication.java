@@ -2,26 +2,13 @@ package com.drawsteel.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import java.util.UUID;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "complications")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Complication {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-    
-    @Column(nullable = false, unique = true)
-    private String name;
-    
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String description;
+@EqualsAndHashCode(callSuper = true)
+public class Complication extends BaseModel {
     
     @Column(columnDefinition = "TEXT")
     private String benefit;

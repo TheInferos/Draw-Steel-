@@ -2,22 +2,12 @@ package com.drawsteel.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import java.util.UUID;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "languages")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Language {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-    
-    @Column(nullable = false, unique = true)
-    private String name;
+@EqualsAndHashCode(callSuper = true)
+public class Language extends BaseModel {
 
 }
