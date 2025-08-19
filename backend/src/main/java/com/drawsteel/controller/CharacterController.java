@@ -1,6 +1,8 @@
 package com.drawsteel.controller;
 
 import com.drawsteel.model.Character;
+import com.drawsteel.model.Ability;
+import com.drawsteel.model.enums.AbilityType;
 import com.drawsteel.service.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,5 +55,52 @@ public class CharacterController {
     public ResponseEntity<Void> deleteCharacter(@PathVariable UUID id) {
         characterService.deleteCharacter(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Ability management endpoints
+    @PostMapping("/{characterId}/abilities/{abilityId}")
+    public ResponseEntity<Character> addAbilityToCharacter(
+            @PathVariable UUID characterId,
+            @PathVariable UUID abilityId) {
+        try {
+            Character updatedCharacter = characterService.addAbilityToCharacter(characterId, abilityId);
+            return ResponseEntity.ok(updatedCharacter);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{characterId}/abilities/{abilityId}")
+    public ResponseEntity<Character> removeAbilityFromCharacter(
+            @PathVariable UUID characterId,
+            @PathVariable UUID abilityId) {
+        try {
+            Character updatedCharacter = characterService.removeAbilityFromCharacter(characterId, abilityId);
+            return ResponseEntity.ok(updatedCharacter);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{characterId}/abilities")
+    public ResponseEntity<List<Ability>> getCharacterAbilities(@PathVariable UUID characterId) {
+        try {
+            List<Ability> abilities = characterService.getCharacterAbilities(characterId);
+            return ResponseEntity.ok(abilities);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{characterId}/abilities/type/{type}")
+    public ResponseEntity<List<Ability>> getCharacterAbilitiesByType(
+            @PathVariable UUID characterId,
+            @PathVariable AbilityType type) {
+        try {
+            List<Ability> abilities = characterService.getCharacterAbilitiesByType(characterId, type);
+            return ResponseEntity.ok(abilities);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

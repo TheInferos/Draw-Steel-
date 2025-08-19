@@ -2,6 +2,10 @@ package com.drawsteel.controller;
 
 import com.drawsteel.model.enums.Weapon;
 import com.drawsteel.model.enums.Armor;
+import com.drawsteel.model.enums.AbilityType;
+import com.drawsteel.model.enums.AbilityKeyword;
+import com.drawsteel.model.enums.Area;
+import com.drawsteel.model.enums.Condition;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +75,58 @@ public class EnumController {
                     map.put("displayName", weapon.getDisplayName());
                     map.put("description", weapon.getDescription());
                     map.put("weaponType", weapon.getWeaponType().name());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+    
+    @GetMapping("/ability-types")
+    public List<Map<String, Object>> getAllAbilityTypes() {
+        return List.of(AbilityType.values()).stream()
+                .map(type -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("name", type.name());
+                    map.put("displayName", type.getDisplayName());
+                    map.put("description", type.getDescription());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+    
+    @GetMapping("/ability-keywords")
+    public List<Map<String, Object>> getAllAbilityKeywords() {
+        return List.of(AbilityKeyword.values()).stream()
+                .map(keyword -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("name", keyword.name());
+                    map.put("displayName", keyword.getDisplayName());
+                    map.put("description", keyword.getDescription());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+    
+    @GetMapping("/areas")
+    public List<Map<String, Object>> getAllAreas() {
+        return List.of(Area.values()).stream()
+                .map(area -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("name", area.name());
+                    map.put("displayName", area.getDisplayName());
+                    map.put("description", area.getDescription());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+    
+    @GetMapping("/conditions")
+    public List<Map<String, Object>> getAllConditions() {
+        return List.of(Condition.values()).stream()
+                .map(condition -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("name", condition.name());
+                    map.put("displayName", condition.getDisplayName());
+                    map.put("description", condition.getDescription());
                     return map;
                 })
                 .collect(Collectors.toList());

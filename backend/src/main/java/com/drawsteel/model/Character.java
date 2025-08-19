@@ -9,9 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import com.drawsteel.model.Ability;
 import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "characters")
@@ -110,6 +113,15 @@ public class Character {
     @Builder.Default
     private Integer stability = BASE_SPEED;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "character_abilities",
+        joinColumns = @JoinColumn(name = "character_id"),
+        inverseJoinColumns = @JoinColumn(name = "ability_id")
+    )
+    @Builder.Default
+    private Set<Ability> abilities = new HashSet<>();
+
     public List<Skill> getAllSkills() {
         List<Skill> allSkills = new ArrayList<>();
         
@@ -122,5 +134,49 @@ public class Character {
         }
         
         return allSkills;
+    }
+
+    public void addAbility(Ability ability) {
+        if (abilities == null) {
+            abilities = new HashSet<>();
+        }
+        abilities.add(ability);
+    }
+
+    public void removeAbility(Ability ability) {
+        if (abilities != null) {
+            abilities.remove(ability);
+        }
+    }
+
+    public boolean hasAbility(Ability ability) {
+        return abilities != null && abilities.contains(ability);
+    }
+
+    public List<Ability> getHeroicAbilities() {
+        if (abilities == null) {
+            return new ArrayList<>();
+        }
+        return abilities.stream()
+                .filter(Ability::getHeroic)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public List<Ability> getSignatureAbilities() {
+        if (abilities == null) {
+            return new ArrayList<>();
+        }
+        return abilities.stream()
+                .filter(Ability::getSignature)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public List<Ability> getAbilitiesByType(com.drawsteel.model.enums.AbilityType type) {
+        if (abilities == null) {
+            return new ArrayList<>();
+        }
+        return abilities.stream()
+                .filter(ability -> ability.getType() == type)
+                .collect(java.util.stream.Collectors.toList());
     }
 }

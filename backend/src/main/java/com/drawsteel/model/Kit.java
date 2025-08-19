@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import com.drawsteel.model.enums.Weapon;
 import com.drawsteel.model.enums.Armor;
+import com.drawsteel.model.Ability;
 import java.util.UUID;
 
 @Entity
@@ -57,6 +58,7 @@ public class Kit {
     @Column(nullable = false)
     private Integer disengage;
     
-    @Column(columnDefinition = "TEXT")
-    private String signatureAbility;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "signature_ability_id")
+    private Ability signatureAbility;
 }

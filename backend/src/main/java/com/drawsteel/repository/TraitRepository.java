@@ -17,4 +17,8 @@ public interface TraitRepository extends JpaRepository<Trait, UUID> {
     List<Trait> findBySignatureToggle(Boolean signatureToggle);
     
     Optional<Trait> findByName(String name);
+    
+    List<Trait> findByAbilitiesIsNotNullAndAbilitiesIsNotEmpty();
+    
+    List<Trait> findByAbilitiesIsEmpty();
 }

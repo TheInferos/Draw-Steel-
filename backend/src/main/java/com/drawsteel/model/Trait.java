@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import com.drawsteel.model.Ability;
 import java.util.UUID;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "traits")
@@ -38,4 +41,33 @@ public class Trait {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ancestry_id")
     private Ancestry ancestry;
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "trait_abilities",
+        joinColumns = @JoinColumn(name = "trait_id"),
+        inverseJoinColumns = @JoinColumn(name = "ability_id")
+    )
+    private Set<Ability> abilities = new HashSet<>();
+    
+    public void addAbility(Ability ability) {
+        if (abilities == null) {
+            abilities = new HashSet<>();
+        }
+        abilities.add(ability);
+    }
+    
+    public void removeAbility(Ability ability) {
+        if (abilities != null) {
+            abilities.remove(ability);
+        }
+    }
+    
+    public boolean hasAbility(Ability ability) {
+        return abilities != null && abilities.contains(ability);
+    }
+    
+    public boolean hasAbilities() {
+        return abilities != null && !abilities.isEmpty();
+    }
 }
