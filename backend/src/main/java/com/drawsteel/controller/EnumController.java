@@ -4,6 +4,8 @@ import com.drawsteel.model.enums.Weapon;
 import com.drawsteel.model.enums.Armor;
 import com.drawsteel.model.enums.AbilityType;
 import com.drawsteel.model.enums.AbilityKeyword;
+import com.drawsteel.model.enums.AbilityScore;
+import com.drawsteel.model.enums.Attribute;
 import com.drawsteel.model.enums.Area;
 import com.drawsteel.model.enums.Condition;
 import com.drawsteel.model.enums.PerkType;
@@ -141,6 +143,19 @@ public class EnumController {
                     map.put("name", type.name());
                     map.put("displayName", type.getDisplayName());
                     map.put("description", type.getDescription());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+    
+    @GetMapping("/ability-scores")
+    public List<Map<String, Object>> getAllAbilityScores() {
+        return List.of(AbilityScore.values()).stream()
+                .map(score -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("name", score.name());
+                    map.put("displayName", score.getDisplayName());
+                    map.put("description", score.getDescription());
                     return map;
                 })
                 .collect(Collectors.toList());
