@@ -6,6 +6,7 @@ import com.drawsteel.model.enums.AbilityType;
 import com.drawsteel.model.enums.AbilityKeyword;
 import com.drawsteel.model.enums.Area;
 import com.drawsteel.model.enums.Condition;
+import com.drawsteel.model.enums.PerkType;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +128,19 @@ public class EnumController {
                     map.put("name", condition.name());
                     map.put("displayName", condition.getDisplayName());
                     map.put("description", condition.getDescription());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+    
+    @GetMapping("/perk-types")
+    public List<Map<String, Object>> getAllPerkTypes() {
+        return List.of(PerkType.values()).stream()
+                .map(type -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("name", type.name());
+                    map.put("displayName", type.getDisplayName());
+                    map.put("description", type.getDescription());
                     return map;
                 })
                 .collect(Collectors.toList());

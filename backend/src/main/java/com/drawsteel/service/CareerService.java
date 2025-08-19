@@ -1,21 +1,26 @@
 package com.drawsteel.service;
 
 import com.drawsteel.model.Career;
+import com.drawsteel.model.Perk;
 import com.drawsteel.repository.CareerRepository;
+import com.drawsteel.repository.PerkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.ArrayList;
 
 @Service
 public class CareerService {
     
     private final CareerRepository careerRepository;
+    private final PerkRepository perkRepository;
     
     @Autowired
-    public CareerService(CareerRepository careerRepository) {
+    public CareerService(CareerRepository careerRepository, PerkRepository perkRepository) {
         this.careerRepository = careerRepository;
+        this.perkRepository = perkRepository;
     }
     
     public List<Career> getAllCareers() {
@@ -59,5 +64,58 @@ public class CareerService {
     
     public void deleteCareer(UUID id) {
         careerRepository.deleteById(id);
+    }
+    
+    // Perk management methods
+    public Career addPerkToCareer(UUID careerId, UUID perkId) {
+        Optional<Career> optionalCareer = careerRepository.findById(careerId);
+        Optional<Perk> optionalPerk = perkRepository.findById(perkId);
+        
+        if (optionalCareer.isPresent() && optionalPerk.isPresent()) {
+            Career career = optionalCareer.get();
+            Perk perk = optionalPerk.get();
+            career.addPerk(perk);
+            return careerRepository.save(career);
+        }
+        throw new RuntimeException("Career or Perk not found");
+    }
+    
+    public Career removePerkFromCareer(UUID careerId, UUID perkId) {
+        Optional<Career> optionalCareer = careerRepository.findById(careerId);
+        Optional<Perk> optionalPerk = perkRepository.findById(perkId);
+        
+        if (optionalCareer.isPresent() && optionalPerk.isPresent()) {
+            Career career = optionalCareer.get();
+            Perk perk = optionalPerk.get();
+            career.removePerk(perk);
+            return careerRepository.save(career);
+        }
+        throw new RuntimeException("Career or Perk not found");
+    }
+    
+    public List<Perk> getCareerPerks(UUID careerId) {
+        Optional<Career> optionalCareer = careerRepository.findById(careerId);
+        if (optionalCareer.isPresent()) {
+            Career career = optionalCareer.get();
+            return new ArrayList<>(career.getPerks());
+        }
+        throw new RuntimeException("Career not found");
+    }
+    
+    public List<Perk> getCareerPerksByType(UUID careerId, com.drawsteel.model.enums.PerkType type) {
+        Optional<Career> optionalCareer = careerRepository.findById(careerId);
+        if (optionalCareer.isPresent()) {
+            Career career = optionalCareer.get();
+            return career.getPerksByType(type);
+        }
+        throw new RuntimeException("Career not found");
+    }
+    
+    public List<Career> getCareersWithPerks() {
+        return careerRepository.findByPerksIsNotNullAndPerksIsNotEmpty();
+    }
+    
+    public List<Career> getCareersWithoutPerks() {
+        return careerRepository.findByPerksIsEmpty();
     }
 }
