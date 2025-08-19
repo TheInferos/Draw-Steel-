@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import com.drawsteel.model.enums.Skill;
 
 @Entity
 @Table(name = "careers")
@@ -14,12 +15,10 @@ import java.util.HashSet;
 @EqualsAndHashCode(callSuper = true)
 public class Career extends BaseModel {
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "career_skills",
-        joinColumns = @JoinColumn(name = "career_id"),
-        inverseJoinColumns = @JoinColumn(name = "skill_id")
-    )
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "career_skills", joinColumns = @JoinColumn(name = "career_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "skill")
     private List<Skill> skills = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)

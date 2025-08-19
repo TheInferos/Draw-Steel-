@@ -1,7 +1,7 @@
 package com.drawsteel.model.character_classes;
 
 import com.drawsteel.model.BaseModel;
-import com.drawsteel.model.Skill;
+import com.drawsteel.model.enums.Skill;
 import com.drawsteel.model.enums.AbilityScore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -36,12 +36,15 @@ public abstract class CharacterClass extends BaseModel {
     @Column(name = "stamina_per_level")
     protected Integer staminaPerLevel;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "class_skills", joinColumns = @JoinColumn(name = "class_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "skill")
     protected List<Skill> skills;
 
     
     public abstract void initializeStartingAttributes();
     
-    // Utility methods for starting attributes
     public void setStartingAttribute(AbilityScore ability, Integer value) {
         if (startingAttributes == null) {
             startingAttributes = new HashMap<>();

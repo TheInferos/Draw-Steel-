@@ -3,6 +3,7 @@ package com.drawsteel.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import com.drawsteel.model.enums.Skill;
 
 @Entity
 @Table(name = "cultures")
@@ -14,7 +15,7 @@ public class Culture extends BaseModel {
     @JoinColumn(name = "language_id")
     private Language language;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "skill_id")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "skill")
     private Skill skill;
 }

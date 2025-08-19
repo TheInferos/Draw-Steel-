@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import com.drawsteel.model.character_classes.CharacterClass;
+import com.drawsteel.model.enums.Skill;
 
 @Entity
 @Table(name = "characters")
