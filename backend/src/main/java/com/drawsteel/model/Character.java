@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import com.drawsteel.model.character_classes.CharacterClass;
 
 @Entity
 @Table(name = "characters")
@@ -48,6 +49,10 @@ public class Character extends BaseModel {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "kit_id")
     private Kit kit;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "character_class_id")
+    private CharacterClass characterClass;
     
     @NotNull
     @Min(MIN_CHARACTERISTIC_SCORE)
