@@ -2,6 +2,7 @@ package com.drawsteel.controller;
 
 import com.drawsteel.model.Character;
 import com.drawsteel.model.Ability;
+import com.drawsteel.model.Complication;
 import com.drawsteel.model.enums.AbilityType;
 import com.drawsteel.service.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,70 @@ public class CharacterController {
         try {
             List<Ability> abilities = characterService.getCharacterAbilitiesByType(characterId, type);
             return ResponseEntity.ok(abilities);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{characterId}/complications/{complicationId}")
+    public ResponseEntity<Character> addComplicationToCharacter(
+            @PathVariable UUID characterId,
+            @PathVariable UUID complicationId) {
+        try {
+            Character updatedCharacter = characterService.addComplicationToCharacter(characterId, complicationId);
+            return ResponseEntity.ok(updatedCharacter);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{characterId}/complications/{complicationId}")
+    public ResponseEntity<Character> removeComplicationFromCharacter(
+            @PathVariable UUID characterId,
+            @PathVariable UUID complicationId) {
+        try {
+            Character updatedCharacter = characterService.removeComplicationFromCharacter(characterId, complicationId);
+            return ResponseEntity.ok(updatedCharacter);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{characterId}/complications")
+    public ResponseEntity<List<Complication>> getCharacterComplications(@PathVariable UUID characterId) {
+        try {
+            List<Complication> complications = characterService.getCharacterComplications(characterId);
+            return ResponseEntity.ok(complications);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{characterId}/complications/with-benefit")
+    public ResponseEntity<List<Complication>> getCharacterComplicationsWithBenefit(@PathVariable UUID characterId) {
+        try {
+            List<Complication> complications = characterService.getCharacterComplicationsWithBenefit(characterId);
+            return ResponseEntity.ok(complications);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{characterId}/complications/with-drawback")
+    public ResponseEntity<List<Complication>> getCharacterComplicationsWithDrawback(@PathVariable UUID characterId) {
+        try {
+            List<Complication> complications = characterService.getCharacterComplicationsWithDrawback(characterId);
+            return ResponseEntity.ok(complications);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{characterId}/complications/with-combined-benefit-drawback")
+    public ResponseEntity<List<Complication>> getCharacterComplicationsWithCombinedBenefitDrawback(@PathVariable UUID characterId) {
+        try {
+            List<Complication> complications = characterService.getCharacterComplicationsWithCombinedBenefitDrawback(characterId);
+            return ResponseEntity.ok(complications);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

@@ -2,8 +2,10 @@ package com.drawsteel.service;
 
 import com.drawsteel.model.Character;
 import com.drawsteel.model.Ability;
+import com.drawsteel.model.Complication;
 import com.drawsteel.repository.CharacterRepository;
 import com.drawsteel.repository.AbilityRepository;
+import com.drawsteel.repository.ComplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -16,11 +18,13 @@ public class CharacterService {
     
     private final CharacterRepository characterRepository;
     private final AbilityRepository abilityRepository;
+    private final ComplicationRepository complicationRepository;
     
     @Autowired
-    public CharacterService(CharacterRepository characterRepository, AbilityRepository abilityRepository) {
+    public CharacterService(CharacterRepository characterRepository, AbilityRepository abilityRepository, ComplicationRepository complicationRepository) {
         this.characterRepository = characterRepository;
         this.abilityRepository = abilityRepository;
+        this.complicationRepository = complicationRepository;
     }
     
     public List<Character> getAllCharacters() {
@@ -102,6 +106,68 @@ public class CharacterService {
         if (optionalCharacter.isPresent()) {
             Character character = optionalCharacter.get();
             return character.getAbilitiesByType(type);
+        }
+        throw new RuntimeException("Character not found");
+    }
+
+    public Character addComplicationToCharacter(UUID characterId, UUID complicationId) {
+        Optional<Character> optionalCharacter = characterRepository.findById(characterId);
+        Optional<Complication> optionalComplication = complicationRepository.findById(complicationId);
+        
+        if (optionalCharacter.isPresent() && optionalComplication.isPresent()) {
+            Character character = optionalCharacter.get();
+            Complication complication = optionalComplication.get();
+            character.addComplication(complication);
+            return characterRepository.save(character);
+        }
+        throw new RuntimeException("Character or Complication not found");
+    }
+
+    public Character removeComplicationFromCharacter(UUID characterId, UUID complicationId) {
+        Optional<Character> optionalCharacter = characterRepository.findById(characterId);
+        Optional<Complication> optionalComplication = complicationRepository.findById(complicationId);
+        
+        if (optionalCharacter.isPresent() && optionalComplication.isPresent()) {
+            Character character = optionalCharacter.get();
+            Complication complication = optionalComplication.get();
+            character.removeComplication(complication);
+            return characterRepository.save(character);
+        }
+        throw new RuntimeException("Character or Complication not found");
+    }
+
+    public List<Complication> getCharacterComplications(UUID characterId) {
+        Optional<Character> optionalCharacter = characterRepository.findById(characterId);
+        if (optionalCharacter.isPresent()) {
+            Character character = optionalCharacter.get();
+            return new ArrayList<>(character.getComplications());
+        }
+        throw new RuntimeException("Character not found");
+    }
+
+    public List<Complication> getCharacterComplicationsWithBenefit(UUID characterId) {
+        Optional<Character> optionalCharacter = characterRepository.findById(characterId);
+        if (optionalCharacter.isPresent()) {
+            Character character = optionalCharacter.get();
+            return character.getComplicationsWithBenefit();
+        }
+        throw new RuntimeException("Character not found");
+    }
+
+    public List<Complication> getCharacterComplicationsWithDrawback(UUID characterId) {
+        Optional<Character> optionalCharacter = characterRepository.findById(characterId);
+        if (optionalCharacter.isPresent()) {
+            Character character = optionalCharacter.get();
+            return character.getComplicationsWithDrawback();
+        }
+        throw new RuntimeException("Character not found");
+    }
+
+    public List<Complication> getCharacterComplicationsWithCombinedBenefitDrawback(UUID characterId) {
+        Optional<Character> optionalCharacter = characterRepository.findById(characterId);
+        if (optionalCharacter.isPresent()) {
+            Character character = optionalCharacter.get();
+            return character.getComplicationsWithCombinedBenefitDrawback();
         }
         throw new RuntimeException("Character not found");
     }
