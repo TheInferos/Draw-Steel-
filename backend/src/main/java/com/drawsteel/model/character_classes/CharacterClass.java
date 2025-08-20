@@ -15,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "character_classes")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @EqualsAndHashCode(callSuper = true)
 public abstract class CharacterClass extends BaseModel {
@@ -60,12 +61,15 @@ public abstract class CharacterClass extends BaseModel {
     @Column(name = "ability")
     protected List<Ability> heroicAbilities;
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "class_perks", joinColumns = @JoinColumn(name = "class_id"))
     protected List<Perk> perks;
     
     @ElementCollection
     @Column(name = "signature_abilities")
     protected List<Ability> signatureAbilitiesList;
 
+    @Transient
     protected List<List<SkillGroup>> optionalSkills;
 
     public abstract void initializeStartingAttributes();
