@@ -11,6 +11,7 @@ import java.util.Map;
 
 @Entity
 @Table(name = "fury_sub_classes")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @EqualsAndHashCode(callSuper = true)
 public abstract class CharacterSubClass extends BaseModel {
