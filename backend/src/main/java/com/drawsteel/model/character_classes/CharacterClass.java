@@ -1,7 +1,10 @@
 package com.drawsteel.model.character_classes;
 
+import com.drawsteel.model.Ability;
 import com.drawsteel.model.BaseModel;
+import com.drawsteel.model.Perk;
 import com.drawsteel.model.enums.Skill;
+import com.drawsteel.model.enums.SkillGroup;
 import com.drawsteel.model.enums.AbilityScore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,9 +25,20 @@ public abstract class CharacterClass extends BaseModel {
     @Column(name = "value")
     private Map<AbilityScore, Integer> startingAttributes = new HashMap<>();
 
+    @Column(name = "heroic_resource_name")
+    protected String heroicResourceName;
+
+    @Column(name = "heroic_resource_in_combat")
+    protected String heroicResourceInCombat;
+    
+    @Column(name = "heroic_resource_out_of_combat")
+    protected String heroicResourceOutOfCombat;
+
+    protected List<String> subClass;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "potency")
-    private AbilityScore potency;
+    protected AbilityScore potency;
 
 
     @Column(name = "recoveries")
@@ -42,7 +56,18 @@ public abstract class CharacterClass extends BaseModel {
     @Column(name = "skill")
     protected List<Skill> skills;
 
+    @ElementCollection
+    @Column(name = "ability")
+    protected List<Ability> heroicAbilities;
+
+    protected List<Perk> perks;
     
+    @ElementCollection
+    @Column(name = "signature_abilities")
+    protected List<Ability> signatureAbilitiesList;
+
+    protected List<List<SkillGroup>> optionalSkills;
+
     public abstract void initializeStartingAttributes();
     
     public void setStartingAttribute(AbilityScore ability, Integer value) {
@@ -64,7 +89,6 @@ public abstract class CharacterClass extends BaseModel {
         return startingAttributes != null ? new HashMap<>(startingAttributes) : new HashMap<>();
     }
     
-    public abstract List<List<Integer>> getStartingAbilityScoreOptions();
-    
+    public abstract List<List<Integer>> getStartingAbilityScoreOptions(); 
 
 }
