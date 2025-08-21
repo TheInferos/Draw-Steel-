@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/perks")
-@CrossOrigin(origins = "*")
 public class PerkController {
     
     private final PerkService perkService;

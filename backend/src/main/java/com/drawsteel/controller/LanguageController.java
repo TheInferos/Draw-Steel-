@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/languages")
-@CrossOrigin(origins = "*")
 public class LanguageController {
     
     private final LanguageService languageService;

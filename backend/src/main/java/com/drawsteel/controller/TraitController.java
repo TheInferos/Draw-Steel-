@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/traits")
-@CrossOrigin(origins = "*")
 public class TraitController {
     
     private final TraitService traitService;

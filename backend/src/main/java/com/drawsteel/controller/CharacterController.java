@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/characters")
-@CrossOrigin(origins = "*")
 public class CharacterController {
     
     private final CharacterService characterService;
