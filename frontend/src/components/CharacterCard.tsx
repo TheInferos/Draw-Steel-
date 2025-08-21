@@ -6,7 +6,7 @@ import { Character } from '../services/api';
 interface CharacterCardProps {
   character: Character;
   onEdit: (character: Character) => void;
-  onDelete: (characterId: number) => void;
+  onDelete: (characterId: string) => void;
 }
 
 const CharacterCard: React.FC<CharacterCardProps> = ({ 
