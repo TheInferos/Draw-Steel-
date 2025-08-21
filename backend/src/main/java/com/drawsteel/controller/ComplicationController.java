@@ -12,7 +12,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/complications")
-@CrossOrigin(origins = "*")
 public class ComplicationController {
     
     private final ComplicationService complicationService;

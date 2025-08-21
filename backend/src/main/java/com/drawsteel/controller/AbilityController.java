@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/abilities")
-@CrossOrigin(origins = "*")
 public class AbilityController {
     
     private final AbilityService abilityService;

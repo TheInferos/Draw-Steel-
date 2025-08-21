@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/kits")
-@CrossOrigin(origins = "*")
 public class KitController {
     
     private final KitService kitService;

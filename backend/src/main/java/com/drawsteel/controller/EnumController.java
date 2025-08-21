@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/enums")
-@CrossOrigin(origins = "*")
 public class EnumController {
     
     @GetMapping("/weapons")
