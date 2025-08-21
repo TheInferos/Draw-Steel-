@@ -1,49 +1,49 @@
 const API_BASE_URL = 'http://localhost:8080/api';
 
 export interface Ancestry {
-  id: number;
+  id: string;
   name: string;
   description?: string;
 }
 
 export interface Culture {
-  id: number;
+  id: string;
   name: string;
   description?: string;
 }
 
 export interface Career {
-  id: number;
+  id: string;
   name: string;
   description?: string;
 }
 
 export interface Kit {
-  id: number;
+  id: string;
   name: string;
   description?: string;
 }
 
 export interface CharacterClass {
-  id: number;
+  id: string;
   name: string;
   description?: string;
 }
 
 export interface Ability {
-  id: number;
+  id: string;
   name: string;
   description?: string;
 }
 
 export interface Complication {
-  id: number;
+  id: string;
   name: string;
   description?: string;
 }
 
 export interface Character {
-  id: number;
+  id: string;
   name: string;
   description?: string;
   level: number;
@@ -67,11 +67,11 @@ export interface CreateCharacterRequest {
   name: string;
   description?: string;
   level: number;
-  ancestryId: number;
-  cultureId: number;
-  careerId: number;
-  kitId: number;
-  characterClassId: number;
+  ancestryId: string;
+  cultureId: string;
+  careerId: string;
+  kitId: string;
+  characterClassId: string;
   might: number;
   agility: number;
   reason: number;
@@ -79,12 +79,12 @@ export interface CreateCharacterRequest {
   presence: number;
   speed: number;
   stability: number;
-  abilityIds: number[];
-  complicationIds: number[];
+  abilityIds: string[];
+  complicationIds: string[];
 }
 
 export interface UpdateCharacterRequest extends Partial<CreateCharacterRequest> {
-  id: number;
+  id: string;
 }
 
 class ApiService {
@@ -110,7 +110,7 @@ class ApiService {
     return this.request<Character[]>('/characters');
   }
 
-  async getCharacter(id: number): Promise<Character> {
+  async getCharacter(id: string): Promise<Character> {
     return this.request<Character>(`/characters/${id}`);
   }
 
@@ -128,7 +128,7 @@ class ApiService {
     });
   }
 
-  async deleteCharacter(id: number): Promise<void> {
+  async deleteCharacter(id: string): Promise<void> {
     return this.request<void>(`/characters/${id}`, {
       method: 'DELETE',
     });

@@ -32,7 +32,7 @@ const CharacterList: React.FC = () => {
     console.log('Edit character:', character);
   };
 
-  const handleDelete = (characterId: number) => {
+  const handleDelete = (characterId: string) => {
     // TODO: Implement delete functionality
     console.log('Delete character:', characterId);
   };
