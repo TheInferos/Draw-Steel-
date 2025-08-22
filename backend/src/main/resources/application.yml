@@ -11,10 +11,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
   
   # H2 Console (disabled for production)
@@ -30,5 +29,4 @@ server:
 
 logging:
   level:
-    com.drawsteel: DEBUG
-    org.springframework.security: DEBUG
+    com.drawsteel: INFO

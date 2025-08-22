@@ -36,6 +36,11 @@ public class CharacterService {
     }
     
     public Character createCharacter(Character character) {
+        // Validate required fields
+        if (character.getName() == null || character.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Character name cannot be null or empty");
+        }
+        
         return characterRepository.save(character);
     }
     
