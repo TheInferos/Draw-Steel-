@@ -133,6 +133,32 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  // Ancestry API calls
+  async getAncestries(): Promise<Ancestry[]> {
+    return this.request<Ancestry[]>('/ancestries');
+  }
+
+  // Culture API calls
+  async getCultures(): Promise<Culture[]> {
+    return this.request<Culture[]>('/cultures');
+  }
+
+  // Career API calls
+  async getCareers(): Promise<Career[]> {
+    return this.request<Career[]>('/careers');
+  }
+
+  // Kit API calls
+  async getKits(): Promise<Kit[]> {
+    return this.request<Kit[]>('/kits');
+  }
+
+  // Character Class API calls
+  async getCharacterClasses(): Promise<CharacterClass[]> {
+    // http://localhost:8080/api/character-classes 
+    return [];
+  }
 }
 
 export const apiService = new ApiService();

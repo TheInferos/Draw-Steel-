@@ -1,80 +1,137 @@
 # Draw Steel Backend
 
-A Spring Boot backend for the Draw Steel game system.
+A Spring Boot application for the Draw Steel tabletop RPG system.
 
-## 🚀 Quick Start
+## Features
 
-### Prerequisites
-- Java 24+
+- **UUID-based IDs**: All entities use UUIDs for their primary keys
+- **JPA/Hibernate**: Full database persistence with PostgreSQL
+- **RESTful APIs**: Complete CRUD operations for all game entities
+- **Character Management**: Basic character CRUD operations with UUID-based IDs
+
+## Prerequisites
+
+- Java 17 or higher
 - Docker and Docker Compose
 - Gradle
 
-### 1. Start PostgreSQL Database
+## Quick Start
+
+### 1. Start the Database
+
 ```bash
-docker-compose up -d
+docker-compose up -d postgres
 ```
 
-### 2. Verify Database is Running
-```bash
-docker-compose ps
-```
+Wait for the database to be ready (check with `docker-compose ps`).
 
-### 3. Start the Application
+### 2. Run the Application
+
 ```bash
 ./gradlew bootRun
 ```
 
-## 🗄️ Database Configuration
+The application will start on `http://localhost:8080/api`
 
-- **Database**: PostgreSQL 15
-- **Host**: localhost:5432
-- **Database**: drawsteeldb
-- **Username**: drawsteel
-- **Password**: drawsteel123
+### 3. Test the API
 
-## 📡 API Endpoints
-
-- **Characters**: `/api/characters`
-- **Ancestries**: `/api/ancestries`
-- **Traits**: `/api/traits`
-- **Test**: `/api/test`
-
-## 🐳 Docker Commands
-
-### Start Database
 ```bash
-docker-compose up -d
+# Get all abilities
+curl http://localhost:8080/api/abilities
+
+# Create a character
+curl -X POST http://localhost:8080/api/characters \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test Character",
+    "description": "A test character"
+  }'
 ```
 
-### Stop Database
-```bash
-docker-compose down
-```
+## API Endpoints
 
-### View Logs
-```bash
-docker-compose logs postgres
-```
+### Characters
+- `GET /characters` - Get all characters
+- `GET /characters/{id}` - Get character by UUID
+- `POST /characters` - Create new character
+- `PUT /characters/{id}` - Update character
+- `DELETE /characters/{id}` - Delete character
 
-### Reset Database
-```bash
-docker-compose down -v
-docker-compose up -d
-```
 
-## 🔧 Development
+### Abilities
+- `GET /abilities` - Get all abilities
+- `GET /abilities/{id}` - Get ability by UUID
+- `POST /abilities` - Create new ability
+- `PUT /abilities/{id}` - Update ability
+- `DELETE /abilities/{id}` - Delete ability
+
+### Other Entities
+Similar endpoints exist for: Ancestry, Career, Culture, Kit, Language, Perk, Trait, Complication
+
+## UUID Implementation
+
+All entities in the system use UUIDs as their primary keys:
+
+- **BaseModel**: Abstract base class with `@GeneratedValue(strategy = GenerationType.UUID)`
+- **All Models**: Extend BaseModel and inherit UUID-based IDs
+- **Controllers**: Accept UUID path parameters
+- **Services**: Use UUIDs for all operations
+- **Repositories**: Extend JpaRepository<Entity, UUID>
+
+## Troubleshooting
+
+### Database Connection Issues
+
+1. Ensure PostgreSQL is running:
+   ```bash
+   docker-compose ps postgres
+   ```
+
+2. Check database logs:
+   ```bash
+   docker-compose logs postgres
+   ```
+
+3. Test connection manually:
+   ```bash
+   docker exec -it drawsteel-postgres psql -U drawsteel -d drawsteeldb
+   ```
+
+### UUID Generation Issues
+
+The application is configured to use PostgreSQL's native UUID generation. If you encounter issues:
+
+1. Check that PostgreSQL is running and accessible
+2. Verify the database schema is properly created
+3. Check application logs for detailed error messages
+
+### Common Errors
+
+
+- **Connection refused**: PostgreSQL container is not running
+- **Authentication failed**: Check username/password in application.yml
+
+## Development
 
 ### Database Schema
-The application will automatically create the database schema on startup with `spring.jpa.hibernate.ddl-auto=update`.
 
-### UUID Generation
-All entities use UUID primary keys with automatic generation.
+The application uses Hibernate's `ddl-auto: update` for development. This means:
+- Tables are created/updated automatically on startup
+- Data is preserved between application restarts
+- For production, change to `ddl-auto: validate` or `ddl-auto: none`
 
-### Docker Naming
-- **Container**: `drawsteel-postgres`
-- **Volume**: `drawsteel_postgres_data`
-- **Network**: `drawsteel_default`
+### Adding New Entities
 
-## 🧪 Testing
+1. Create a model class extending `BaseModel`
+2. Add `@Entity` annotation
+3. Create a repository extending `JpaRepository<Entity, UUID>`
+4. Create a service class
+5. Create a controller with REST endpoints
 
-The application includes H2 database for testing purposes, configured separately from the main PostgreSQL database.
+## Production Considerations
+
+- Change `ddl-auto` to `validate` or `none`
+- Use proper database credentials
+- Configure connection pooling
+- Set appropriate logging levels
+- Use environment variables for configuration

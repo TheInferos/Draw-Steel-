@@ -1,71 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Save, ArrowLeft, Dice6, Shield, Zap, Brain, Heart, Eye } from 'lucide-react';
-
-interface CharacterForm {
-  name: string;
-  description: string;
-  level: number;
-  strength: number;
-  dexterity: number;
-  constitution: number;
-  intelligence: number;
-  wisdom: number;
-  charisma: number;
-  background: string;
-  personality: string;
-  equipment: string;
-  notes: string;
-}
+import { Save, ArrowLeft } from 'lucide-react';
+import { apiService, CreateCharacterRequest, Ancestry, Culture, Career, Kit, CharacterClass } from '../services/api';
 
 const CharacterCreator: React.FC = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<CharacterForm>({
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<CreateCharacterRequest>({
     name: '',
     description: '',
     level: 1,
-    strength: 10,
-    dexterity: 10,
-    constitution: 10,
-    intelligence: 10,
-    wisdom: 10,
-    charisma: 10,
-    background: '',
-    personality: '',
-    equipment: '',
-    notes: ''
+    ancestryId: '',
+    cultureId: '',
+    careerId: '',
+    kitId: '',
+    characterClassId: '',
+    might: 0,
+    agility: 0,
+    reason: 0,
+    intuition: 0,
+    presence: 0,
+    speed: 5,
+    stability: 0,
+    abilityIds: [],
+    complicationIds: []
   });
 
-  const handleInputChange = (field: keyof CharacterForm, value: string | number) => {
+  // State for dropdown options
+  const [ancestries, setAncestries] = useState<Ancestry[]>([]);
+  const [cultures, setCultures] = useState<Culture[]>([]);
+  const [careers, setCareers] = useState<Career[]>([]);
+  const [kits, setKits] = useState<Kit[]>([]);
+  const [characterClasses, setCharacterClasses] = useState<CharacterClass[]>([]);
+
+  useEffect(() => {
+    // Load dropdown options
+    const loadOptions = async () => {
+      try {
+        const [ancestriesData, culturesData, careersData, kitsData, classesData] = await Promise.all([
+          apiService.getAncestries(),
+          apiService.getCultures(),
+          apiService.getCareers(),
+          apiService.getKits(),
+          apiService.getCharacterClasses()
+        ]);
+        setAncestries(ancestriesData);
+        setCultures(culturesData);
+        setCareers(careersData);
+        setKits(kitsData);
+        setCharacterClasses(classesData);
+      } catch (error) {
+        console.error('Failed to load options:', error);
+      }
+    };
+
+    loadOptions();
+  }, []);
+
+  const handleInputChange = (field: keyof CreateCharacterRequest, value: string | number | string[]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
-  };
-
-  const rollAbilityScore = () => {
-    // Simulate 4d6 drop lowest
-    const rolls = Array.from({ length: 4 }, () => Math.floor(Math.random() * 6) + 1);
-    rolls.sort((a, b) => b - a);
-    return rolls.slice(0, 3).reduce((sum, roll) => sum + roll, 0);
-  };
-
-  const rollAllAbilities = () => {
-    setFormData(prev => ({
-      ...prev,
-      strength: rollAbilityScore(),
-      dexterity: rollAbilityScore(),
-      constitution: rollAbilityScore(),
-      intelligence: rollAbilityScore(),
-      wisdom: rollAbilityScore(),
-      charisma: rollAbilityScore()
-    }));
-  };
-
-  const getModifier = (score: number): string => {
-    const modifier = Math.floor((score - 10) / 2);
-    return modifier >= 0 ? `+${modifier}` : `${modifier}`;
   };
 
   const nextStep = () => {
@@ -76,11 +73,19 @@ const CharacterCreator: React.FC = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Send to backend API
-    console.log('Creating character:', formData);
-    navigate('/');
+    setLoading(true);
+    
+    try {
+      await apiService.createCharacter(formData);
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to create character:', error);
+      // TODO: Add proper error handling
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderStep1 = () => (
@@ -128,89 +133,77 @@ const CharacterCreator: React.FC = () => {
 
   const renderStep2 = () => (
     <div className="space-y-6">
-      <h3 className="text-xl font-fantasy font-semibold text-secondary-900">Ability Scores</h3>
+      <h3 className="text-xl font-fantasy font-semibold text-secondary-900">Character Identity</h3>
       
-      <div className="text-center mb-6">
-        <button
-          type="button"
-          onClick={rollAllAbilities}
-          className="btn-primary flex items-center space-x-2 mx-auto"
-        >
-          <Dice6 className="h-5 w-5" />
-          <span>Roll All Abilities (4d6 drop lowest)</span>
-        </button>
-      </div>
-      
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {[
-          { key: 'strength', label: 'Strength', icon: Shield, color: 'text-red-600' },
-          { key: 'dexterity', label: 'Dexterity', icon: Zap, color: 'text-green-600' },
-          { key: 'constitution', label: 'Constitution', icon: Heart, color: 'text-orange-600' },
-          { key: 'intelligence', label: 'Intelligence', icon: Brain, color: 'text-blue-600' },
-          { key: 'wisdom', label: 'Wisdom', icon: Eye, color: 'text-purple-600' },
-          { key: 'charisma', label: 'Charisma', icon: Heart, color: 'text-pink-600' }
-        ].map(({ key, label, icon: Icon, color }) => (
-          <div key={key} className="text-center">
-            <Icon className={`h-8 w-8 ${color} mx-auto mb-2`} />
-            <label className="block text-sm font-medium text-secondary-700 mb-2">{label}</label>
-            <input
-              type="number"
-              min="3"
-              max="20"
-              value={formData[key as keyof CharacterForm] as number}
-              onChange={(e) => handleInputChange(key as keyof CharacterForm, parseInt(e.target.value))}
-              className="input-field text-center text-lg font-bold"
-            />
-            <div className="text-sm text-secondary-600 mt-1">
-              {getModifier(formData[key as keyof CharacterForm] as number)}
-            </div>
-          </div>
-        ))}
-      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-secondary-700 mb-2">Ancestry</label>
+          <select
+            value={formData.ancestryId}
+            onChange={(e) => handleInputChange('ancestryId', e.target.value)}
+            className="input-field"
+          >
+            <option value="">Select Ancestry</option>
+            {ancestries.map(ancestry => (
+              <option key={ancestry.id} value={ancestry.id}>{ancestry.name}</option>
+            ))}
+          </select>
+        </div>
 
-      <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-secondary-700 mb-2">Background</label>
-          <textarea
-            value={formData.background}
-            onChange={(e) => handleInputChange('background', e.target.value)}
+          <label className="block text-sm font-medium text-secondary-700 mb-2">Culture</label>
+          <select
+            value={formData.cultureId}
+            onChange={(e) => handleInputChange('cultureId', e.target.value)}
             className="input-field"
-            rows={3}
-            placeholder="Describe your character's background..."
-          />
+          >
+            <option value="">Select Culture</option>
+            {cultures.map(culture => (
+              <option key={culture.id} value={culture.id}>{culture.name}</option>
+            ))}
+          </select>
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-secondary-700 mb-2">Personality</label>
-          <textarea
-            value={formData.personality}
-            onChange={(e) => handleInputChange('personality', e.target.value)}
+          <label className="block text-sm font-medium text-secondary-700 mb-2">Career</label>
+          <select
+            value={formData.careerId}
+            onChange={(e) => handleInputChange('careerId', e.target.value)}
             className="input-field"
-            rows={2}
-            placeholder="What makes your character unique?"
-          />
+          >
+            <option value="">Select Career</option>
+            {careers.map(career => (
+              <option key={career.id} value={career.id}>{career.name}</option>
+            ))}
+          </select>
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-secondary-700 mb-2">Equipment</label>
-          <textarea
-            value={formData.equipment}
-            onChange={(e) => handleInputChange('equipment', e.target.value)}
+          <label className="block text-sm font-medium text-secondary-700 mb-2">Class</label>
+          <select
+            value={formData.characterClassId}
+            onChange={(e) => handleInputChange('characterClassId', e.target.value)}
             className="input-field"
-            rows={2}
-            placeholder="What equipment does your character have?"
-          />
+          >
+            <option value="">Select Class</option>
+            {characterClasses.map(charClass => (
+              <option key={charClass.id} value={charClass.id}>{charClass.name}</option>
+            ))}
+          </select>
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-secondary-700 mb-2">Notes</label>
-          <textarea
-            value={formData.notes}
-            onChange={(e) => handleInputChange('notes', e.target.value)}
+          <label className="block text-sm font-medium text-secondary-700 mb-2">Kit</label>
+          <select
+            value={formData.kitId}
+            onChange={(e) => handleInputChange('kitId', e.target.value)}
             className="input-field"
-            rows={2}
-            placeholder="Any additional notes about your character..."
-          />
+          >
+            <option value="">Select Kit</option>
+            {kits.map(kit => (
+              <option key={kit.id} value={kit.id}>{kit.name}</option>
+            ))}
+          </select>
         </div>
       </div>
     </div>
@@ -277,10 +270,11 @@ const CharacterCreator: React.FC = () => {
             ) : (
               <button
                 type="submit"
+                disabled={loading}
                 className="btn-primary flex items-center space-x-2"
               >
                 <Save className="h-5 w-5" />
-                <span>Create Character</span>
+                <span>{loading ? 'Creating...' : 'Create Character'}</span>
               </button>
             )}
           </div>

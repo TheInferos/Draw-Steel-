@@ -37,8 +37,14 @@ public class CharacterController {
     
     @PostMapping
     public ResponseEntity<Character> createCharacter(@RequestBody Character character) {
-        Character createdCharacter = characterService.createCharacter(character);
-        return ResponseEntity.ok(createdCharacter);
+        try {
+            Character createdCharacter = characterService.createCharacter(character);
+            return ResponseEntity.ok(createdCharacter);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
     
     @PutMapping("/{id}")
