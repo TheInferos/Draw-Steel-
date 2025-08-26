@@ -48,7 +48,7 @@ public class CultureService {
             existingCulture.setName(cultureDetails.getName());
             existingCulture.setDescription(cultureDetails.getDescription());
             existingCulture.setLanguage(cultureDetails.getLanguage());
-            existingCulture.setSkill(cultureDetails.getSkill());
+            existingCulture.setQuickBuild(cultureDetails.getQuickBuild());
             return cultureRepository.save(existingCulture);
         }
         throw new RuntimeException("Culture not found with id: " + id);

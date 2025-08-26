@@ -16,7 +16,7 @@ import com.drawsteel.model.enums.SkillGroup;
 public class Culture extends BaseModel {
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "language_id")
+    @JoinColumn(name = "language_id", nullable = true)
     private Language language;
 
     @ElementCollection

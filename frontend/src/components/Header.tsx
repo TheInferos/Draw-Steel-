@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Sword, Users, Plus } from 'lucide-react';
+import { Sword, Users, Plus, Database } from 'lucide-react';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -43,6 +43,18 @@ const Header: React.FC = () => {
             >
               <Plus className="h-5 w-5" />
               <span>Create</span>
+            </Link>
+            
+            <Link
+              to="/database"
+              className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-200 ${
+                isActive('/database')
+                  ? 'bg-primary-100 text-primary-700'
+                  : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+              }`}
+            >
+              <Database className="h-5 w-5" />
+              <span>Database</span>
             </Link>
           </nav>
         </div>
