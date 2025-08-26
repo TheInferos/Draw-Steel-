@@ -4,6 +4,7 @@ import Header from './components/Header';
 import CharacterList from './components/CharacterList';
 import CharacterCreator from './components/CharacterCreator';
 import CharacterView from './components/CharacterView';
+import DataSeeder from './components/DataSeeder';
 import './App.css';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<CharacterList />} />
             <Route path="/create" element={<CharacterCreator />} />
             <Route path="/character/:id" element={<CharacterView />} />
+            <Route path="/database" element={<DataSeeder />} />
           </Routes>
         </main>
       </div>

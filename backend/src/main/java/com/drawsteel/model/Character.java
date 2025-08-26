@@ -128,8 +128,8 @@ public class Character extends BaseModel {
     public List<Skill> getAllSkills() {
         List<Skill> allSkills = new ArrayList<>();
         
-        if (culture != null && culture.getSkill() != null) {
-            allSkills.add(culture.getSkill());
+        if (culture != null && culture.getQuickBuild() != null) {
+            allSkills.add(culture.getQuickBuild());
         }
         
         if (career != null && career.getSkills() != null) {

@@ -3,6 +3,6 @@ frontend/node_modules/*
 backend/.gradle/*
 backend/build/*
 backend/.idea/*
-backend/.vscode/settings.json
+backend/.vscode/*
 
 backend/gradle/wrapper/gradle-wrapper.jar
