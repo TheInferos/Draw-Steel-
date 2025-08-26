@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Agent",
+    "description": "You worked as a spy for a government or organization. In defining your career, think about the following questions:\nWho did you work for?\nWho did you spy on?\nWho shouldn't know your true identity and allegiance but does\nWho did you burn or leave behind to get a job done?",
+    "skills": ["SNEAK"],
+    "skillGroups": ["INTRIGUE", "INTERPERSONAL"],
+    "quickBuild": ["SNEAK", "LIE", "DISGUISE"],
+    "incitingIncident": [
+      "Disavowed: While on a dangerous espionage assignment, things went sideways. Although you escaped with your life, the mission was a public failure thanks to bad information your agency gave you. They denied you work for them, and you went on the run. Hero work will let you survive and clear your name.",
+      "Faceless: Your identity was always hidden. It was your way of protecting those around you because the work you did spying on powerful entities came with dangers. Then your world came crashing down when an enemy agent unmasked you, causing you to lose everything—your privacy, livelihood, loved ones, all gone in the blink of an eye. Instead of going into hiding, you became a public hero to protect the innocent in the name of those you lost.",
+      "Free Agent: There was a time in your life when you used to sell information to the highest bidder. Your acts were unsanctioned by any one organization, but you were well-connected enough to trade in secrets. Politics never mattered much to you until the information you sold wound up causing a ripple effect of harm that eventually destroyed the place you once called home. You became a hero to make up for your past.",
+      "Informed: After years of cultivating a rich list of informants, one of those informants risked everything to expose the heinous plans of powerful individuals. You promised to protect your informant, but your agency left them hanging—literally. You cut ties with your employer and swore to always make good on your word as a hero.",
+      "Spies and Lovers: While embedded in an undercover assignment, you fell for someone on the other side. They discovered you were a double agent, and though you insisted your feelings were real, the deceit cut too deep for your love interest to ignore. They exposed you, spurned you, or died because of their closeness to you. You left the espionage business to become a hero with nothing to hide.",
+      "Turncoat: You spent your life in service of your country or an organization that upheld your values. During your undercover operations, you discovered that everything you had been told was a lie. Whether you confronted your superiors or were exposed, you were stripped of your service medals before you left to become a true hero."
+    ]
+  },
+  { 
+    "name": "Aristocrat", 
+    "description":"Career? Who needs a career when you’re born into money! Or marry into it! Or con your way into it! Whatever the case, you didn’t need to work thanks to (someone’s) generational wealth. In defining your career, think about the following questions: \nHow did you become an aristocrat? \nWhat did you do to fill your days?\nWhich aristocrats and people who worked for you were your best friends and greatest enemies?\nWhat sentimental heirloom from your old estate do you carry, and what does it mean to you?",
+    "skills": [],
+    "skillGroups": ["INTERPERSONAL","LORE"],
+    "quickBuild": ["BRAG", "SOCIETY"],
+    "renown": 1,
+    "wealth": 1,
+    "incitingIncidents":[
+      "Blood Money: When you entered adulthood, you heard unsavory whispers about your family’s fortune before learning that their wealth came at the cost of others’ suffering. Whether you shed light on the secret or not, you left to become a hero stripped of noble title.",
+      "Charmed Life: Whether through some supernatural power or your innate persuasiveness, you were able to defraud other aristocrats. You did it for fun. And when you were found out, you lost your status. Whether you served time or escaped punishment, you decided to rehabilitate yourself and became a hero.",
+      "Inheritance: The guardians who instilled in you the virtues of doing the right thing were murdered in a senseless petty robbery. Though their wealth was bequeathed to you, it did little to assuage the guilt you felt for being unable to stop the deadly crime. You decided to use your riches to fund your life as a hero, whether publicly or using an alter ego.",
+      "Privileged Position: Life outside the manor never piqued your interest. You had everything you wanted. It thus came as a surprise when the peasants came to overthrow your family. You narrowly escaped, and for the first time witnessed the world. It caused you to become a hero for the people, fighting against inequities.",
+      "Royal Pauper: Seeking a break from noble duties, you sought a lookalike to switch identities with. It went so well that you made a habit of switching whenever you were bored. Unfortunately, your counterpart became so good at imitating you that they convinced all those around you that you were an impostor. You lost contact with your family, but now pursue a heroic path free of the pomp of your old life.",
+      "Wicked Secret: One parent passed away when you were a baby and the other remarried years later. Then that parent died under suspicious circumstances. Their spouse ousted you, and you were banished (and possibly hunted). Rising from tragedy, you now seek to right the wrongs of the world."
+    ]
+  },
+  {
+    "name": "Artisan",
+    "description": "You made and sold useful wares. In defining your career, think about the following questions:\nWhat did you create?\nWho taught you your craft?\nWas there any particular creation you were known for?\nDid you have a shop, or did you travel to sell your wares?",
+    "skillGroups": ["CRAFTING"],
+    "quickBuild": ["BLACKSMITHING", "CARPENTRY"],
+    "projectPoints":240,
+    "incitingIncidents":[
+      "Continue the Work: A great hero was a fan of the things you created and gave you a generous commission to create your best work for them. While  working on this commission, you and the hero became close friends. The day you finished the work was the same day they disappeared. To honor their legacy, you took up the mantle of a hero with the intent of finishing your friend’s work.",
+      "Inspired: As you traveled the road selling your wares, troll bandits attacked you. One of the bandits claimed an item belonging to someone precious to you—or perhaps claimed that person’s life—but the rest were driven off or slain by a group of heroes. Seeing the quick work those heroes made of the bandits inspired you to follow in their footsteps.",
+      "Robbery: A criminal gang stole your goods and harmed a number of people who worked for you. You became a hero to prevent such indignities from being visited upon others, to seek revenge for the assault, or to find the thieves and get your stuff back.",
+      "Stolen Passions: Your parents discouraged your artistic talents, instead trying to focus your passions on the family business. You refused to dim your spark and continued your work in secret. Enraged at discovering your disobedience, they sold your work to a traveling merchant. You left your hometown, seeking your lost art and encouraging others to live freely.",
+      "Tarnished Honor: A new patron commissioned some art, but on completion, they refused to pay you and claimed the work as their own. You were accused of plagiarism and run out of town. For you, heroics are about restoring your name and honor.",
+      "Twisted Skill: You had great success that caused an unscrupulous rival to curse you. For a time, everything you tried to create turned to ruin. You broke the curse through adventuring, and in doing so, discovered a new joy and purpose that now defines you."]
+  }
+]
