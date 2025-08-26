@@ -21,6 +21,17 @@ public class Career extends BaseModel {
     @Column(name = "skill")
     private List<Skill> skills = new ArrayList<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "career_inciting_incidents", joinColumns = @JoinColumn(name = "career_id"))
+    @Column(name = "incident", columnDefinition = "TEXT")
+    private List<String> incitingIncidents = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "career_quick_build_skills", joinColumns = @JoinColumn(name = "career_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "skill")
+    private List<Skill> quickBuild = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "career_languages",
