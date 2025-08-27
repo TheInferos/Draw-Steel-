@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Silver Tongue",
+    "description": "Your innate magic allows you to twist how your words are perceived to get a better read on people and convince them to see things your way. You have one skill of your choice from the interpersonal skill group (see Skills in Chapter 9: Tests), and you gain an edge on tests when attempting to discover an NPC’s motivations and pitfalls during a negotiation (see Chapter 11: Negotiation)",
+    "cost": 0,
+    "signatureToggle": true,
+    "traitType": "ANCESTRY"
+  },
+  {
+    "name": "Barbed Tail",
+    "description": " Your pointy tail allows you to punctuate all your actions. Once per round when you make a melee strike, you can deal extra damage with the strike equal to your highest characteristic score.",
+    "cost": 1,
+    "signatureToggle": false,
+    "traitType": "ANCESTRY"
+  },
+  {
+    "name": "Beast Legs",
+    "description": "Your powerful legs make you faster. You have speed 6.",
+    "cost": 1,
+    "signatureToggle": false,
+    "traitType": "ANCESTRY"
+  },
+  {
+    "name": "Glowing Eyes",
+    "description": "Your eyes are a solid, vibrant color that flares to show your excitement or rage. Whenever you take damage from a creature, you can use a triggered action to deal that creature psychic damage equal to 1d10 + your level.",
+    "cost": 1,
+    "signatureToggle": false,
+    "traitType": "ANCESTRY"
+  }
+]

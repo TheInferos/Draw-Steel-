@@ -3,6 +3,7 @@ package com.drawsteel.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import com.drawsteel.model.enums.TraitType;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -18,8 +19,9 @@ public class Trait extends BaseModel {
     @Column(nullable = false)
     private Boolean signatureToggle;
     
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String traitType;
+    private TraitType traitType;
     
     @Column(columnDefinition = "TEXT")
     private String effect;
