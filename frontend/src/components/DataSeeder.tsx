@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { Save, Database, AlertCircle, CheckCircle } from 'lucide-react';
+import culturesData from '../data/cultures.json';
+import careersData from '../data/careers.json';
+import ancestriesData from '../data/ancestries.json';
+import traitsData from '../data/traits.json';
 
 interface SeedData {
   ancestries: Array<{ name: string; description?: string }>;
@@ -9,7 +13,8 @@ interface SeedData {
     skillGroups: string[];
     quickBuild: string;
   }>;
-  careers: Array<{ name: string; description?: string }>;
+  careers: Array<{ name: string; description?: string, skills?: string[], skillGroups?: string[], quickBuild?: string[], incitingIncidents?: string[], renown?: number, wealth?: number, projectPoints?: number }>;
+  traits: Array<{ name: string; description?: string; cost?: number; signatureToggle?: boolean }>;
   kits: Array<{ name: string; description?: string }>;
   characterClasses: Array<{ name: string; description?: string }>;
   abilities: Array<{ name: string; description?: string }>;
@@ -22,59 +27,10 @@ const DataSeeder: React.FC = () => {
 
   // Sample data for Draw Steel RPG - customize this with your actual game data
   const seedData: SeedData = {
-    ancestries: [
-      { name: 'Devil' },
-      { name: 'Dragon Knight' },
-      { name: 'Dwarf' },
-      { name: 'Wood Elf' },
-      { name: 'High Elf' },
-      { name:'Hakaan' },
-      { name: 'Human' },
-      { name: 'Memonek'},
-      { name: 'Orc' },
-      { name: 'Polder'},
-      { name: 'Revenant'},
-      { name: 'Time Raider'}
-    ],
-    cultures: [
-      { 
-        name: 'Nomadic', 
-        description: 'A nomadic culture travels from place to place to survive. Members of a nomadic culture might follow animal migrations or the weather, travel to sell their wares or services, or simply enjoy a restless lifestyle full of new experiences and peoples. Those who grow up in nomadic cultures learn to navigate the wilderness and work closely with others to survive.',
-        skillGroups: ['EXPLORATION', 'INTERPERSONAL'],
-        quickBuild: 'NAVIGATE'
-      },
-      { 
-        name: 'Rural', 
-        description: 'A rural culture is one located in a town, village, or smaller settled enclave. People dwelling in such places often cultivate the land, trade goods or services with travelers passing through, harvest fish from the sea, or mine metals and gems from the earth. Living among a small population, most folks in a rural community learn a trade and are handed down bits of essential knowledge to help their community survive. For example, when a rural culture has only one blacksmith, it\'s important to have an apprentice already learning at the anvil well before that smith starts to get old. If the only priest in town gets the sniffles, folks want an acolyte ready to wear the fancy robes should the worst occur.',
-        skillGroups: ['CRAFTING', 'LORE'],
-        quickBuild: 'NATURE'
-      },
-      { 
-        name: 'Secluded', 
-        description: 'A secluded culture is based in one relatively close-quarters structure—a building, a cavern, and so forth—and interacts with other cultures only rarely. Such places are often buildings or complexes such as monasteries, castles, or prisons. Folk in a secluded culture have little or no reason to leave their home or interact with other cultures on the outside, but might have an awareness of those cultures and of events happening beyond their enclave. When people live together in close quarters, they typically learn to get along. They often spend much time in study or introspection, as there is not much else to do in seclusion.',
-        skillGroups: ['INTERPERSONAL', 'LORE'],
-        quickBuild: 'READ_PERSON'
-      },
-      { 
-        name: 'Urban', 
-        description: 'An urban culture is always centered in a city. Such a culture might arise within the walls of Capital, a massive metropolis with a cosmopolitan population; within a network of caverns that hold an underground city; or in any other place where a large population lives relatively close together. The people of urban cultures often learn to effectively misdirect others in order to navigate the crowds and the political machinations that can come with city life.',
-        skillGroups: ['INTERPERSONAL', 'INTRIGUE'],
-        quickBuild: 'ALERTNESS'
-      },
-      { 
-        name: 'Wilderness', 
-        description: 'A wilderness culture doesn\'t try to tame the terrain in which its people live, whether desert, forest, swamp, tundra, ocean, or more exotic climes. Instead, the folk of such a culture thrive amid nature, taking their sustenance and shelter from the land. A wilderness culture might be a circle of druids protecting a remote wode, a band of brigands hiding out in desert caves, or a camp of orc mercenaries who call the trackless mountains home. People in a wilderness culture learn how to use the land for all they need to live, typically crafting their own tools, clothing, and more.',
-        skillGroups: ['CRAFTING', 'EXPLORATION'],
-        quickBuild: 'ENDURANCE'
-      }
-    ],
-    careers: [
-      { name: 'Warrior', description: 'Trained in the arts of combat and warfare.' },
-      { name: 'Scholar', description: 'Dedicated to learning and preserving knowledge.' },
-      { name: 'Merchant', description: 'Skilled in trade and commerce.' },
-      { name: 'Artisan', description: 'Creators of fine goods and works of art.' },
-      { name: 'Scout', description: 'Experts in exploration and survival.' }
-    ],
+    ancestries: ancestriesData,
+    cultures: culturesData,
+    careers: careersData,
+    traits: traitsData,
     kits: [
       { name: 'Soldier', description: 'Military training and equipment.' },
       { name: 'Scholar', description: 'Academic tools and research materials.' },
@@ -124,6 +80,44 @@ const DataSeeder: React.FC = () => {
     }
   };
 
+  const seedCareersOnly = async () => {
+    setLoading(true);
+    setResults({});
+
+    try {
+      await seedCareers();
+      setResults({
+        overall: { success: true, message: 'Careers seeded successfully!' }
+      });
+    } catch (error) {
+      console.error('Careers seeding failed:', error);
+      setResults({
+        overall: { success: false, message: `Careers seeding failed: ${error}` }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const seedTraitsOnly = async () => {
+    setLoading(true);
+    setResults({});
+
+    try {
+      await seedTraits();
+      setResults({
+        overall: { success: true, message: 'Traits seeded successfully!' }
+      });
+    } catch (error) {
+      console.error('Traits seeding failed:', error);
+      setResults({
+        overall: { success: false, message: `Traits seeding failed: ${error}` }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const seedDataToDatabase = async () => {
     setLoading(true);
     setResults({});
@@ -134,6 +128,7 @@ const DataSeeder: React.FC = () => {
         seedAncestries(),
         seedCultures(),
         seedCareers(),
+        seedTraits(),
         seedKits(),
         seedCharacterClasses(),
         seedAbilities(),
@@ -182,6 +177,22 @@ const DataSeeder: React.FC = () => {
       setResults(prev => ({ ...prev, cultures: { success: true, message: 'Cultures seeded' } }));
     } catch (error) {
       setResults(prev => ({ ...prev, cultures: { success: false, message: `Failed: ${error}` } }));
+      throw error;
+    }
+  };
+
+  const seedTraits = async () => {
+    try {
+      for (const trait of seedData.traits) {
+        await fetch('/api/traits', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(trait)
+        });
+      }
+      setResults(prev => ({ ...prev, traits: { success: true, message: 'Traits seeded' } }));
+    } catch (error) {
+      setResults(prev => ({ ...prev, traits: { success: false, message: `Failed: ${error}` } }));
       throw error;
     }
   };
@@ -290,23 +301,61 @@ const DataSeeder: React.FC = () => {
         </div>
 
         <div className="mb-6">
-          <button
-            onClick={seedCulturesOnly}
-            disabled={loading}
-            className="btn-primary mb-4 flex items-center justify-center space-x-2 py-2 px-4"
-          >
-            {loading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span>Seeding Cultures...</span>
-              </>
-            ) : (
-              <>
-                <Database className="h-4 w-4" />
-                <span>Seed Cultures Only</span>
-              </>
-            )}
-          </button>
+          <div className="flex space-x-4 mb-4">
+            <button
+              onClick={seedCulturesOnly}
+              disabled={loading}
+              className="btn-primary flex items-center justify-center space-x-2 py-2 px-4"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Seeding Cultures...</span>
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4" />
+                  <span>Seed Cultures Only</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={seedCareersOnly}
+              disabled={loading}
+              className="btn-primary flex items-center justify-center space-x-2 py-2 px-4"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Seeding Careers...</span>
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4" />
+                  <span>Seed Careers Only</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={seedTraitsOnly}
+              disabled={loading}
+              className="btn-primary flex items-center justify-center space-x-2 py-2 px-4"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Seeding Traits...</span>
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4" />
+                  <span>Seed Traits Only</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="mb-6">
@@ -321,6 +370,7 @@ const DataSeeder: React.FC = () => {
               <li>• {seedData.ancestries.length} Ancestries (Human, Dwarf, Elf, etc.)</li>
               <li>• {seedData.cultures.length} Cultures (Nomadic, Rural, Wilderness, etc.)</li>
               <li>• {seedData.careers.length} Careers (Warrior, Scholar, Merchant, etc.)</li>
+              <li>• {seedData.traits.length} Traits (Silver Tongue, Barbed Tail, Beast Legs, etc.)</li>
               <li>• {seedData.kits.length} Kits (Soldier, Scholar, Trader, etc.)</li>
               <li>• {seedData.characterClasses.length} Character Classes (Fighter, Mage, Rogue, etc.)</li>
               <li>• {seedData.abilities.length} Abilities (Combat Mastery, Arcane Insight, etc.)</li>
