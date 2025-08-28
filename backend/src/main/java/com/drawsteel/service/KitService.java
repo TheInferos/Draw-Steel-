@@ -13,77 +13,43 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class KitService {
+public class KitService extends BaseServiceImpl<Kit, KitRepository> {
     
-    private final KitRepository kitRepository;
     private final AbilityRepository abilityRepository;
     
     @Autowired
     public KitService(KitRepository kitRepository, AbilityRepository abilityRepository) {
-        this.kitRepository = kitRepository;
+        super(kitRepository);
         this.abilityRepository = abilityRepository;
     }
     
-    public List<Kit> getAllKits() {
-        return kitRepository.findAll();
-    }
-    
-    public Optional<Kit> getKitById(UUID id) {
-        return kitRepository.findById(id);
-    }
-    
-    public Kit createKit(Kit kit) {
-        // Check if kit with the same name already exists
-        if (kitRepository.findByName(kit.getName()).isPresent()) {
+    @Override
+    public Kit create(Kit kit) {
+        if (getByName(kit.getName()).isPresent()) {
             throw new IllegalArgumentException("Kit with name '" + kit.getName() + "' already exists");
         }
         
-        // Validate armor and weapon enum values
         validateKitEnums(kit);
         
-        // Validate signature ability if provided
         validateSignatureAbility(kit);
         
-        return kitRepository.save(kit);
+        return super.create(kit);
     }
     
-    public Kit updateKit(UUID id, Kit kitDetails) {
-        Optional<Kit> optionalKit = kitRepository.findById(id);
-        if (optionalKit.isPresent()) {
-            Kit existingKit = optionalKit.get();
-            
-            // Check if the new name conflicts with another kit (excluding the current one)
-            Optional<Kit> existingWithName = kitRepository.findByName(kitDetails.getName());
+    @Override
+    public Kit update(UUID id, Kit kitDetails) {
+        // Check if the new name conflicts with another kit (excluding the current one)
+        if (kitDetails.getName() != null) {
+            Optional<Kit> existingWithName = getByName(kitDetails.getName());
             if (existingWithName.isPresent() && !existingWithName.get().getId().equals(id)) {
                 throw new IllegalArgumentException("Kit with name '" + kitDetails.getName() + "' already exists");
             }
-            
-            // Validate armor and weapon enum values
-            validateKitEnums(kitDetails);
-            
-            // Validate signature ability if provided
-            validateSignatureAbility(kitDetails);
-            
-            existingKit.setName(kitDetails.getName());
-            existingKit.setDescription(kitDetails.getDescription());
-            existingKit.setArmor(kitDetails.getArmor());
-            existingKit.setWeapon(kitDetails.getWeapon());
-            existingKit.setStamina(kitDetails.getStamina());
-            existingKit.setSpeed(kitDetails.getSpeed());
-            existingKit.setStability(kitDetails.getStability());
-            existingKit.setMeleeDamage(kitDetails.getMeleeDamage());
-            existingKit.setRangedDamage(kitDetails.getRangedDamage());
-            existingKit.setMeleeDistance(kitDetails.getMeleeDistance());
-            existingKit.setRangedDistance(kitDetails.getRangedDistance());
-            existingKit.setDisengage(kitDetails.getDisengage());
-            existingKit.setSignatureAbility(kitDetails.getSignatureAbility());
-            return kitRepository.save(existingKit);
         }
-        throw new RuntimeException("Kit not found with id: " + id);
-    }
-    
-    public void deleteKit(UUID id) {
-        kitRepository.deleteById(id);
+        
+        validateKitEnums(kitDetails);
+        validateSignatureAbility(kitDetails);
+        
+        return super.update(id, kitDetails);
     }
 
     /**

@@ -12,56 +12,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/traits")
-public class TraitController {
+public class TraitController extends BaseController<Trait> {
     
     private final TraitService traitService;
     
     @Autowired
     public TraitController(TraitService traitService) {
+        super(traitService);
         this.traitService = traitService;
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<Trait>> getAllTraits() {
-        List<Trait> traits = traitService.getAllTraits();
-        return ResponseEntity.ok(traits);
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Trait> getTraitById(@PathVariable UUID id) {
-        return traitService.getTraitById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    
-    @PostMapping
-    public ResponseEntity<?> createTrait(@RequestBody Trait trait) {
-        try {
-            Trait createdTrait = traitService.createTrait(trait);
-            return ResponseEntity.ok(createdTrait);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(409)
-                    .body(Map.of("error", e.getMessage()));
-        }
-    }
-    
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateTrait(@PathVariable UUID id, @RequestBody Trait traitDetails) {
-        try {
-            Trait updatedTrait = traitService.updateTrait(id, traitDetails);
-            return ResponseEntity.ok(updatedTrait);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(409)
-                    .body(Map.of("error", e.getMessage()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTrait(@PathVariable UUID id) {
-        traitService.deleteTrait(id);
-        return ResponseEntity.noContent().build();
     }
     
     @GetMapping("/ancestry/{ancestryId}")

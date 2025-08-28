@@ -3,42 +3,20 @@ package com.drawsteel.controller;
 import com.drawsteel.model.Complication;
 import com.drawsteel.service.ComplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/complications")
-public class ComplicationController {
+public class ComplicationController extends BaseController<Complication> {
     
     private final ComplicationService complicationService;
     
     @Autowired
     public ComplicationController(ComplicationService complicationService) {
+        super(complicationService);
         this.complicationService = complicationService;
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<Complication>> getAllComplications() {
-        List<Complication> complications = complicationService.getAllComplications();
-        return ResponseEntity.ok(complications);
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Complication> getComplicationById(@PathVariable UUID id) {
-        Optional<Complication> complication = complicationService.getComplicationById(id);
-        return complication.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    
-    @GetMapping("/name/{name}")
-    public ResponseEntity<Complication> getComplicationByName(@PathVariable String name) {
-        Optional<Complication> complication = complicationService.getComplicationByName(name);
-        return complication.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/with-benefit")
@@ -87,33 +65,5 @@ public class ComplicationController {
     public ResponseEntity<List<Complication>> searchByAllBenefitDrawbackFields(@RequestParam String term) {
         List<Complication> complications = complicationService.searchByAllBenefitDrawbackFields(term);
         return ResponseEntity.ok(complications);
-    }
-    
-    @PostMapping
-    public ResponseEntity<Complication> createComplication(@RequestBody Complication complication) {
-        try {
-            Complication createdComplication = complicationService.createComplication(complication);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdComplication);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-    
-    @PutMapping("/{id}")
-    public ResponseEntity<Complication> updateComplication(@PathVariable UUID id, @RequestBody Complication complicationDetails) {
-        try {
-            Complication updatedComplication = complicationService.updateComplication(id, complicationDetails);
-            return ResponseEntity.ok(updatedComplication);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteComplication(@PathVariable UUID id) {
-        complicationService.deleteComplication(id);
-        return ResponseEntity.noContent().build();
     }
 }

@@ -12,109 +12,76 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class AbilityService {
-    
-    private final AbilityRepository abilityRepository;
+public class AbilityService extends BaseServiceImpl<Ability, AbilityRepository> {
     
     @Autowired
     public AbilityService(AbilityRepository abilityRepository) {
-        this.abilityRepository = abilityRepository;
+        super(abilityRepository);
     }
     
     public List<Ability> getAllAbilities() {
-        return abilityRepository.findAll();
+        return getAll();
     }
     
     public Optional<Ability> getAbilityById(UUID id) {
-        return abilityRepository.findById(id);
+        return getById(id);
     }
     
     public Optional<Ability> getAbilityByName(String name) {
-        return abilityRepository.findByName(name);
+        return getByName(name);
     }
     
     public List<Ability> getAbilitiesByType(AbilityType type) {
-        return abilityRepository.findByType(type);
+        return repository.findByType(type);
     }
     
     public List<Ability> getHeroicAbilities() {
-        return abilityRepository.findByHeroic(true);
+        return repository.findByHeroic(true);
     }
     
     public List<Ability> getSignatureAbilities() {
-        return abilityRepository.findBySignature(true);
+        return repository.findBySignature(true);
     }
     
     public List<Ability> getAbilitiesByArea(Area area) {
-        return abilityRepository.findByArea(area);
+        return repository.findByArea(area);
     }
     
     public List<Ability> getAbilitiesByCondition(Condition condition) {
-        return abilityRepository.findByCondition(condition);
+        return repository.findByCondition(condition);
     }
     
     public List<Ability> searchAbilities(String searchTerm) {
-        return abilityRepository.searchByNameOrDescription(searchTerm);
+        return repository.searchByNameOrDescription(searchTerm);
     }
     
     public List<Ability> getHeroicSignatureAbilities() {
-        return abilityRepository.findHeroicSignatureAbilities();
+        return repository.findHeroicSignatureAbilities();
     }
     
     public List<Ability> getSpecialAbilities() {
-        return abilityRepository.findSpecialAbilities();
+        return repository.findSpecialAbilities();
     }
     
     public Ability createAbility(Ability ability) {
-        // Check if ability with the same name already exists
-        if (abilityRepository.findByName(ability.getName()).isPresent()) {
-            throw new IllegalArgumentException("Ability with name '" + ability.getName() + "' already exists");
-        }
-        
         // Validate ability data
         validateAbility(ability);
-        
-        return abilityRepository.save(ability);
+        return create(ability);
     }
     
     public Ability updateAbility(UUID id, Ability abilityDetails) {
-        Optional<Ability> optionalAbility = abilityRepository.findById(id);
-        if (optionalAbility.isPresent()) {
-            Ability existingAbility = optionalAbility.get();
-            
-            // Check if the new name conflicts with another ability (excluding the current one)
-            Optional<Ability> existingWithName = abilityRepository.findByName(abilityDetails.getName());
-            if (existingWithName.isPresent() && !existingWithName.get().getId().equals(id)) {
-                throw new IllegalArgumentException("Ability with name '" + abilityDetails.getName() + "' already exists");
-            }
-            
-            // Validate ability data
-            validateAbility(abilityDetails);
-            
-            // Update fields
-            existingAbility.setName(abilityDetails.getName());
-            existingAbility.setDescription(abilityDetails.getDescription());
-            existingAbility.setType(abilityDetails.getType());
-            existingAbility.setKeywords(abilityDetails.getKeywords());
-            existingAbility.setConditions(abilityDetails.getConditions());
-            existingAbility.setHeroic(abilityDetails.getHeroic());
-            existingAbility.setSignature(abilityDetails.getSignature());
-            existingAbility.setArea(abilityDetails.getArea());
-            existingAbility.setTarget(abilityDetails.getTarget());
-            existingAbility.setAbility(abilityDetails.getAbility());
-            existingAbility.setTrigger(abilityDetails.getTrigger());
-            existingAbility.setCooldown(abilityDetails.getCooldown());
-            existingAbility.setResourceCost(abilityDetails.getResourceCost());
-            existingAbility.setRange(abilityDetails.getRange());
-            existingAbility.setDuration(abilityDetails.getDuration());
-            
-            return abilityRepository.save(existingAbility);
-        }
-        throw new RuntimeException("Ability not found with id: " + id);
+        // Validate ability data
+        validateAbility(abilityDetails);
+        return update(id, abilityDetails);
     }
     
     public void deleteAbility(UUID id) {
-        abilityRepository.deleteById(id);
+        delete(id);
+    }
+    
+    @Override
+    public Optional<Ability> getByName(String name) {
+        return repository.findByName(name);
     }
     
     private void validateAbility(Ability ability) {

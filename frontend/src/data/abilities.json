@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Unmooring",
+    "description": "Your weapon unleashes psionic energy that reduces your target’s weight.",
+    "keywords": ["MELEE", "PSIONIC", "STRIKE", "WEAPON"],
+    "type": "ATTACK",
+    "conditions":[],
+    "heroic": false,
+    "signature": true,
+    "area": "NONE",
+    "target": "One creature",
+    "ability": "Until the end of the target’s next turn, any forced movement that affects the target has its distance increased by 2.",
+    "trigger": "None",
+    "cooldown": 0,
+    "resourceCost": "None",
+    "range": 1,
+    "duration": 0
+  },
+  {
+    "name": "Double Strike",
+    "description": " Why strike once when you could do it twice?",
+    "keywords": ["MELEE", "STRIKE", "WEAPON"],
+    "type": "ATTACK",
+    "conditions":[],
+    "heroic": false,
+    "signature": true,
+    "area": "NONE",
+    "target": "Two creatures or objects",
+    "ability": "If you use this ability on your turn, you can use it against one target, then use your maneuver and your move action for that turn before using the ability against a second target. You still use the same power roll for both targets.",
+    "trigger": "None",
+    "cooldown": 0,
+    "resourceCost": "None",
+    "range": 1,
+    "duration": 0
+  }
+]

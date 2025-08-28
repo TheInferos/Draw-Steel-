@@ -13,7 +13,7 @@ import java.util.UUID;
 public abstract class BaseModel {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "UUID")
     private UUID id;
     
     @Column(nullable = false, unique = true)
@@ -21,4 +21,11 @@ public abstract class BaseModel {
     
     @Column(columnDefinition = "TEXT")
     private String description;
+    
+    @PrePersist
+    protected void prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
+    }
 }

@@ -6,42 +6,20 @@ import com.drawsteel.model.enums.Area;
 import com.drawsteel.model.enums.Condition;
 import com.drawsteel.service.AbilityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/abilities")
-public class AbilityController {
+public class AbilityController extends BaseController<Ability> {
     
     private final AbilityService abilityService;
     
     @Autowired
     public AbilityController(AbilityService abilityService) {
+        super(abilityService);
         this.abilityService = abilityService;
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<Ability>> getAllAbilities() {
-        List<Ability> abilities = abilityService.getAllAbilities();
-        return ResponseEntity.ok(abilities);
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Ability> getAbilityById(@PathVariable UUID id) {
-        Optional<Ability> ability = abilityService.getAbilityById(id);
-        return ability.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    
-    @GetMapping("/name/{name}")
-    public ResponseEntity<Ability> getAbilityByName(@PathVariable String name) {
-        Optional<Ability> ability = abilityService.getAbilityByName(name);
-        return ability.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/type/{type}")
@@ -90,33 +68,5 @@ public class AbilityController {
     public ResponseEntity<List<Ability>> getHeroicSignatureAbilities() {
         List<Ability> abilities = abilityService.getHeroicSignatureAbilities();
         return ResponseEntity.ok(abilities);
-    }
-    
-    @PostMapping
-    public ResponseEntity<Ability> createAbility(@RequestBody Ability ability) {
-        try {
-            Ability createdAbility = abilityService.createAbility(ability);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdAbility);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-    
-    @PutMapping("/{id}")
-    public ResponseEntity<Ability> updateAbility(@PathVariable UUID id, @RequestBody Ability abilityDetails) {
-        try {
-            Ability updatedAbility = abilityService.updateAbility(id, abilityDetails);
-            return ResponseEntity.ok(updatedAbility);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAbility(@PathVariable UUID id) {
-        abilityService.deleteAbility(id);
-        return ResponseEntity.noContent().build();
     }
 }
