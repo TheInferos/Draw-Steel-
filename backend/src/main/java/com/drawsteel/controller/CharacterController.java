@@ -13,54 +13,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/characters")
-public class CharacterController {
+public class CharacterController extends BaseController<Character> {
     
     private final CharacterService characterService;
     
     @Autowired
     public CharacterController(CharacterService characterService) {
+        super(characterService);
         this.characterService = characterService;
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<Character>> getAllCharacters() {
-        List<Character> characters = characterService.getAllCharacters();
-        return ResponseEntity.ok(characters);
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Character> getCharacterById(@PathVariable UUID id) {
-        return characterService.getCharacterById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    
-    @PostMapping
-    public ResponseEntity<Character> createCharacter(@RequestBody Character character) {
-        try {
-            Character createdCharacter = characterService.createCharacter(character);
-            return ResponseEntity.ok(createdCharacter);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-    
-    @PutMapping("/{id}")
-    public ResponseEntity<Character> updateCharacter(@PathVariable UUID id, @RequestBody Character characterDetails) {
-        try {
-            Character updatedCharacter = characterService.updateCharacter(id, characterDetails);
-            return ResponseEntity.ok(updatedCharacter);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCharacter(@PathVariable UUID id) {
-        characterService.deleteCharacter(id);
-        return ResponseEntity.noContent().build();
     }
 
     // Ability management endpoints

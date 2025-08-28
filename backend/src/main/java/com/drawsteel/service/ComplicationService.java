@@ -9,94 +9,69 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ComplicationService {
-    
-    private final ComplicationRepository complicationRepository;
+public class ComplicationService extends BaseServiceImpl<Complication, ComplicationRepository> {
     
     @Autowired
     public ComplicationService(ComplicationRepository complicationRepository) {
-        this.complicationRepository = complicationRepository;
-    }
-    
-    public List<Complication> getAllComplications() {
-        return complicationRepository.findAll();
-    }
-    
-    public Optional<Complication> getComplicationById(UUID id) {
-        return complicationRepository.findById(id);
-    }
-    
-    public Optional<Complication> getComplicationByName(String name) {
-        return complicationRepository.findByName(name);
+        super(complicationRepository);
     }
     
     public List<Complication> getComplicationsWithBenefit() {
-        return complicationRepository.findByBenefitIsNotNull();
+        return repository.findByBenefitIsNotNull();
     }
     
     public List<Complication> getComplicationsWithDrawback() {
-        return complicationRepository.findByDrawbackIsNotNull();
+        return repository.findByDrawbackIsNotNull();
     }
     
     public List<Complication> getComplicationsWithoutBenefitOrDrawback() {
-        return complicationRepository.findByBenefitIsNullAndDrawbackIsNull();
+        return repository.findByBenefitIsNullAndDrawbackIsNull();
     }
     
     public List<Complication> getComplicationsWithCombinedBenefitDrawback() {
-        return complicationRepository.findByCombinedBenefitDrawbackIsNotNull();
+        return repository.findByCombinedBenefitDrawbackIsNotNull();
     }
     
     public List<Complication> searchComplications(String searchTerm) {
-        return complicationRepository.searchByNameOrDescription(searchTerm);
+        return repository.searchByNameOrDescription(searchTerm);
     }
     
     public List<Complication> searchByBenefitOrDrawback(String searchTerm) {
-        return complicationRepository.searchByBenefitOrDrawback(searchTerm);
+        return repository.searchByBenefitOrDrawback(searchTerm);
     }
     
     public List<Complication> searchByCombinedBenefitDrawback(String searchTerm) {
-        return complicationRepository.searchByCombinedBenefitDrawback(searchTerm);
+        return repository.searchByCombinedBenefitDrawback(searchTerm);
     }
     
     public List<Complication> searchByAllBenefitDrawbackFields(String searchTerm) {
-        return complicationRepository.searchByAllBenefitDrawbackFields(searchTerm);
+        return repository.searchByAllBenefitDrawbackFields(searchTerm);
     }
     
-    public Complication createComplication(Complication complication) {
-        if (complicationRepository.findByName(complication.getName()).isPresent()) {
+    @Override
+    public Complication create(Complication complication) {
+        if (getByName(complication.getName()).isPresent()) {
             throw new IllegalArgumentException("Complication with name '" + complication.getName() + "' already exists");
         }
         
         validateComplication(complication);
         
-        return complicationRepository.save(complication);
+        return super.create(complication);
     }
     
-    public Complication updateComplication(UUID id, Complication complicationDetails) {
-        Optional<Complication> optionalComplication = complicationRepository.findById(id);
-        if (optionalComplication.isPresent()) {
-            Complication existingComplication = optionalComplication.get();
-            
-            Optional<Complication> existingWithName = complicationRepository.findByName(complicationDetails.getName());
+    @Override
+    public Complication update(UUID id, Complication complicationDetails) {
+        // Check if the new name conflicts with another complication (excluding the current one)
+        if (complicationDetails.getName() != null) {
+            Optional<Complication> existingWithName = getByName(complicationDetails.getName());
             if (existingWithName.isPresent() && !existingWithName.get().getId().equals(id)) {
                 throw new IllegalArgumentException("Complication with name '" + complicationDetails.getName() + "' already exists");
             }
-            
-            validateComplication(complicationDetails);
-            
-            existingComplication.setName(complicationDetails.getName());
-            existingComplication.setDescription(complicationDetails.getDescription());
-            existingComplication.setBenefit(complicationDetails.getBenefit());
-            existingComplication.setDrawback(complicationDetails.getDrawback());
-            existingComplication.setCombinedBenefitDrawback(complicationDetails.getCombinedBenefitDrawback());
-            
-            return complicationRepository.save(existingComplication);
         }
-        throw new RuntimeException("Complication not found with id: " + id);
-    }
-    
-    public void deleteComplication(UUID id) {
-        complicationRepository.deleteById(id);
+        
+        validateComplication(complicationDetails);
+        
+        return super.update(id, complicationDetails);
     }
     
     private void validateComplication(Complication complication) {

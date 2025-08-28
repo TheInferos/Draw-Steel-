@@ -12,89 +12,65 @@ import java.util.UUID;
 import java.util.ArrayList;
 
 @Service
-public class CareerService {
+public class CareerService extends BaseServiceImpl<Career, CareerRepository> {
     
-    private final CareerRepository careerRepository;
     private final PerkRepository perkRepository;
     
     @Autowired
     public CareerService(CareerRepository careerRepository, PerkRepository perkRepository) {
-        this.careerRepository = careerRepository;
+        super(careerRepository);
         this.perkRepository = perkRepository;
     }
     
-    public List<Career> getAllCareers() {
-        return careerRepository.findAll();
-    }
-    
-    public Optional<Career> getCareerById(UUID id) {
-        return careerRepository.findById(id);
-    }
-    
-    public Career createCareer(Career career) {
-        if (careerRepository.findByName(career.getName()).isPresent()) {
+    @Override
+    public Career create(Career career) {
+        if (getByName(career.getName()).isPresent()) {
             throw new IllegalArgumentException("Career with name '" + career.getName() + "' already exists");
         }
-        return careerRepository.save(career);
+        return super.create(career);
     }
     
-    public Career updateCareer(UUID id, Career careerDetails) {
-        Optional<Career> optionalCareer = careerRepository.findById(id);
-        if (optionalCareer.isPresent()) {
-            Career existingCareer = optionalCareer.get();
-            
-            // Check if the new name conflicts with another career (excluding the current one)
-            Optional<Career> existingWithName = careerRepository.findByName(careerDetails.getName());
+    @Override
+    public Career update(UUID id, Career careerDetails) {
+        // Check if the new name conflicts with another career (excluding the current one)
+        if (careerDetails.getName() != null) {
+            Optional<Career> existingWithName = getByName(careerDetails.getName());
             if (existingWithName.isPresent() && !existingWithName.get().getId().equals(id)) {
                 throw new IllegalArgumentException("Career with name '" + careerDetails.getName() + "' already exists");
             }
-            
-            existingCareer.setName(careerDetails.getName());
-            existingCareer.setDescription(careerDetails.getDescription());
-            existingCareer.setSkills(careerDetails.getSkills());
-            existingCareer.setLanguages(careerDetails.getLanguages());
-            existingCareer.setRenown(careerDetails.getRenown());
-            existingCareer.setWealth(careerDetails.getWealth());
-            existingCareer.setProjectPoints(careerDetails.getProjectPoints());
-            existingCareer.setPerks(careerDetails.getPerks());
-            return careerRepository.save(existingCareer);
         }
-        throw new RuntimeException("Career not found with id: " + id);
-    }
-    
-    public void deleteCareer(UUID id) {
-        careerRepository.deleteById(id);
+        return super.update(id, careerDetails);
     }
     
     // Perk management methods
     public Career addPerkToCareer(UUID careerId, UUID perkId) {
-        Optional<Career> optionalCareer = careerRepository.findById(careerId);
+        Optional<Career> optionalCareer = getById(careerId);
         Optional<Perk> optionalPerk = perkRepository.findById(perkId);
         
         if (optionalCareer.isPresent() && optionalPerk.isPresent()) {
             Career career = optionalCareer.get();
             Perk perk = optionalPerk.get();
             career.addPerk(perk);
-            return careerRepository.save(career);
+            return repository.save(career);
         }
         throw new RuntimeException("Career or Perk not found");
     }
     
     public Career removePerkFromCareer(UUID careerId, UUID perkId) {
-        Optional<Career> optionalCareer = careerRepository.findById(careerId);
+        Optional<Career> optionalCareer = getById(careerId);
         Optional<Perk> optionalPerk = perkRepository.findById(perkId);
         
         if (optionalCareer.isPresent() && optionalPerk.isPresent()) {
             Career career = optionalCareer.get();
             Perk perk = optionalPerk.get();
             career.removePerk(perk);
-            return careerRepository.save(career);
+            return repository.save(career);
         }
         throw new RuntimeException("Career or Perk not found");
     }
     
     public List<Perk> getCareerPerks(UUID careerId) {
-        Optional<Career> optionalCareer = careerRepository.findById(careerId);
+        Optional<Career> optionalCareer = getById(careerId);
         if (optionalCareer.isPresent()) {
             Career career = optionalCareer.get();
             return new ArrayList<>(career.getPerks());
@@ -103,7 +79,7 @@ public class CareerService {
     }
     
     public List<Perk> getCareerPerksByType(UUID careerId, com.drawsteel.model.enums.PerkType type) {
-        Optional<Career> optionalCareer = careerRepository.findById(careerId);
+        Optional<Career> optionalCareer = getById(careerId);
         if (optionalCareer.isPresent()) {
             Career career = optionalCareer.get();
             return career.getPerksByType(type);
@@ -112,10 +88,10 @@ public class CareerService {
     }
     
     public List<Career> getCareersWithPerks() {
-        return careerRepository.findByPerksIsNotNullAndPerksIsNotEmpty();
+        return repository.findByPerksIsNotNullAndPerksIsNotEmpty();
     }
     
     public List<Career> getCareersWithoutPerks() {
-        return careerRepository.findByPerksIsEmpty();
+        return repository.findByPerksIsEmpty();
     }
 }

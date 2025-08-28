@@ -11,87 +11,64 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class PerkService {
+public class PerkService extends BaseServiceImpl<Perk, PerkRepository> {
     
-    private final PerkRepository perkRepository;
     private final AbilityRepository abilityRepository;
     
     @Autowired
     public PerkService(PerkRepository perkRepository, AbilityRepository abilityRepository) {
-        this.perkRepository = perkRepository;
+        super(perkRepository);
         this.abilityRepository = abilityRepository;
     }
     
-    public List<Perk> getAllPerks() {
-        return perkRepository.findAll();
-    }
-    
-    public Optional<Perk> getPerkById(UUID id) {
-        return perkRepository.findById(id);
-    }
-    
-    public Optional<Perk> getPerkByName(String name) {
-        return perkRepository.findByName(name);
-    }
-    
     public List<Perk> getPerksByType(PerkType type) {
-        return perkRepository.findByType(type);
+        return repository.findByType(type);
     }
     
     public List<Perk> getPerksWithAbility() {
-        return perkRepository.findByAbilityIsNotNull();
+        return repository.findByAbilityIsNotNull();
     }
     
     public List<Perk> getPerksWithoutAbility() {
-        return perkRepository.findByAbilityIsNull();
+        return repository.findByAbilityIsNull();
     }
     
     public List<Perk> searchPerks(String searchTerm) {
-        return perkRepository.searchByNameOrDescription(searchTerm);
+        return repository.searchByNameOrDescription(searchTerm);
     }
     
     public List<Perk> getPerksByTypeWithAbility(PerkType type) {
-        return perkRepository.findByTypeWithAbility(type);
+        return repository.findByTypeWithAbility(type);
     }
     
     public List<Perk> getPerksByTypeWithoutAbility(PerkType type) {
-        return perkRepository.findByTypeWithoutAbility(type);
+        return repository.findByTypeWithoutAbility(type);
     }
     
-    public Perk createPerk(Perk perk) {
-        if (perkRepository.findByName(perk.getName()).isPresent()) {
+    @Override
+    public Perk create(Perk perk) {
+        if (getByName(perk.getName()).isPresent()) {
             throw new IllegalArgumentException("Perk with name '" + perk.getName() + "' already exists");
         }
         
         validatePerk(perk);
         
-        return perkRepository.save(perk);
+        return super.create(perk);
     }
     
-    public Perk updatePerk(UUID id, Perk perkDetails) {
-        Optional<Perk> optionalPerk = perkRepository.findById(id);
-        if (optionalPerk.isPresent()) {
-            Perk existingPerk = optionalPerk.get();
-            
-            Optional<Perk> existingWithName = perkRepository.findByName(perkDetails.getName());
+    @Override
+    public Perk update(UUID id, Perk perkDetails) {
+        // Check if the new name conflicts with another perk (excluding the current one)
+        if (perkDetails.getName() != null) {
+            Optional<Perk> existingWithName = getByName(perkDetails.getName());
             if (existingWithName.isPresent() && !existingWithName.get().getId().equals(id)) {
                 throw new IllegalArgumentException("Perk with name '" + perkDetails.getName() + "' already exists");
             }
-            
-            validatePerk(perkDetails);
-            
-            existingPerk.setName(perkDetails.getName());
-            existingPerk.setDescription(perkDetails.getDescription());
-            existingPerk.setType(perkDetails.getType());
-            existingPerk.setAbility(perkDetails.getAbility());
-            
-            return perkRepository.save(existingPerk);
         }
-        throw new RuntimeException("Perk not found with id: " + id);
-    }
-    
-    public void deletePerk(UUID id) {
-        perkRepository.deleteById(id);
+        
+        validatePerk(perkDetails);
+        
+        return super.update(id, perkDetails);
     }
     
     private void validatePerk(Perk perk) {

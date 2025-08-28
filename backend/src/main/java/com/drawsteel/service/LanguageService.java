@@ -9,49 +9,29 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class LanguageService {
-    
-    private final LanguageRepository languageRepository;
+public class LanguageService extends BaseServiceImpl<Language, LanguageRepository> {
     
     @Autowired
     public LanguageService(LanguageRepository languageRepository) {
-        this.languageRepository = languageRepository;
+        super(languageRepository);
     }
     
-    public List<Language> getAllLanguages() {
-        return languageRepository.findAll();
-    }
-    
-    public Optional<Language> getLanguageById(UUID id) {
-        return languageRepository.findById(id);
-    }
-    
-    public Language createLanguage(Language language) {
-        // Check if language with the same name already exists
-        if (languageRepository.findByName(language.getName()).isPresent()) {
+    @Override
+    public Language create(Language language) {
+        if (getByName(language.getName()).isPresent()) {
             throw new IllegalArgumentException("Language with name '" + language.getName() + "' already exists");
         }
-        return languageRepository.save(language);
+        return super.create(language);
     }
     
-    public Language updateLanguage(UUID id, Language languageDetails) {
-        Optional<Language> optionalLanguage = languageRepository.findById(id);
-        if (optionalLanguage.isPresent()) {
-            Language existingLanguage = optionalLanguage.get();
-            
-            // Check if the new name conflicts with another language (excluding the current one)
-            Optional<Language> existingWithName = languageRepository.findByName(languageDetails.getName());
+    @Override
+    public Language update(UUID id, Language languageDetails) {
+        if (languageDetails.getName() != null) {
+            Optional<Language> existingWithName = getByName(languageDetails.getName());
             if (existingWithName.isPresent() && !existingWithName.get().getId().equals(id)) {
                 throw new IllegalArgumentException("Language with name '" + languageDetails.getName() + "' already exists");
             }
-            
-            existingLanguage.setName(languageDetails.getName());
-            return languageRepository.save(existingLanguage);
         }
-        throw new RuntimeException("Language not found with id: " + id);
-    }
-    
-    public void deleteLanguage(UUID id) {
-        languageRepository.deleteById(id);
+        return super.update(id, languageDetails);
     }
 }

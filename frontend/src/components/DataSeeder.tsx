@@ -3,9 +3,12 @@ import { Save, Database, AlertCircle, CheckCircle } from 'lucide-react';
 import culturesData from '../data/cultures.json';
 import careersData from '../data/careers.json';
 import ancestriesData from '../data/ancestries.json';
+import abilitiesData from '../data/abilities.json';
 import traitsData from '../data/traits.json';
+import perksData from '../data/perks.json';
 
 interface SeedData {
+  abilities: Array<{ name: string; description?: string }>;
   ancestries: Array<{ name: string; description?: string }>;
   cultures: Array<{ 
     name: string; 
@@ -15,9 +18,9 @@ interface SeedData {
   }>;
   careers: Array<{ name: string; description?: string, skills?: string[], skillGroups?: string[], quickBuild?: string[], incitingIncidents?: string[], renown?: number, wealth?: number, projectPoints?: number }>;
   traits: Array<{ name: string; description?: string; cost?: number; signatureToggle?: boolean }>;
+  perks: Array<{ name: string; description?: string; type?: string }>;
   kits: Array<{ name: string; description?: string }>;
   characterClasses: Array<{ name: string; description?: string }>;
-  abilities: Array<{ name: string; description?: string }>;
   complications: Array<{ name: string; description?: string }>;
 }
 
@@ -27,10 +30,12 @@ const DataSeeder: React.FC = () => {
 
   // Sample data for Draw Steel RPG - customize this with your actual game data
   const seedData: SeedData = {
+    abilities: abilitiesData,
     ancestries: ancestriesData,
     cultures: culturesData,
     careers: careersData,
     traits: traitsData,
+    perks: perksData,
     kits: [
       { name: 'Soldier', description: 'Military training and equipment.' },
       { name: 'Scholar', description: 'Academic tools and research materials.' },
@@ -44,13 +49,6 @@ const DataSeeder: React.FC = () => {
       { name: 'Rogue', description: 'Skilled in stealth, deception, and precision.' },
       { name: 'Cleric', description: 'Divine servants who channel spiritual power.' },
       { name: 'Ranger', description: 'Wilderness experts who blend combat and nature magic.' }
-    ],
-    abilities: [
-      { name: 'Combat Mastery', description: 'Superior skill in armed and unarmed combat.' },
-      { name: 'Arcane Insight', description: 'Deep understanding of magical principles.' },
-      { name: 'Shadow Step', description: 'Ability to move unseen through shadows.' },
-      { name: 'Divine Favor', description: 'Blessed with supernatural protection and guidance.' },
-      { name: 'Wild Empathy', description: 'Natural connection with animals and nature.' }
     ],
     complications: [
       { name: 'Haunted Past', description: 'Troubled history that occasionally resurfaces.' },
@@ -118,6 +116,44 @@ const DataSeeder: React.FC = () => {
     }
   };
 
+  const seedPerksOnly = async () => {
+    setLoading(true);
+    setResults({});
+
+    try {
+      await seedPerks();
+      setResults({
+        overall: { success: true, message: 'Perks seeded successfully!' }
+      });
+    } catch (error) {
+      console.error('Perks seeding failed:', error);
+      setResults({
+        overall: { success: false, message: `Perks seeding failed: ${error}` }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const seedAbilitiesOnly = async () => {
+    setLoading(true);
+    setResults({});
+
+    try {
+      await seedAbilities();
+      setResults({
+        overall: { success: true, message: 'Abilities seeded successfully!' }
+      });
+    } catch (error) {
+      console.error('Abilities seeding failed:', error);
+      setResults({
+        overall: { success: false, message: `Abilities seeding failed: ${error}` }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const seedDataToDatabase = async () => {
     setLoading(true);
     setResults({});
@@ -129,6 +165,7 @@ const DataSeeder: React.FC = () => {
         seedCultures(),
         seedCareers(),
         seedTraits(),
+        seedPerks(),
         seedKits(),
         seedCharacterClasses(),
         seedAbilities(),
@@ -193,6 +230,22 @@ const DataSeeder: React.FC = () => {
       setResults(prev => ({ ...prev, traits: { success: true, message: 'Traits seeded' } }));
     } catch (error) {
       setResults(prev => ({ ...prev, traits: { success: false, message: `Failed: ${error}` } }));
+      throw error;
+    }
+  };
+
+  const seedPerks = async () => {
+    try {
+      for (const perk of seedData.perks) {
+        await fetch('/api/perks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(perk)
+        });
+      }
+      setResults(prev => ({ ...prev, perks: { success: true, message: 'Perks seeded' } }));
+    } catch (error) {
+      setResults(prev => ({ ...prev, perks: { success: false, message: `Failed: ${error}` } }));
       throw error;
     }
   };
@@ -355,6 +408,42 @@ const DataSeeder: React.FC = () => {
                 </>
               )}
             </button>
+
+            <button
+              onClick={seedPerksOnly}
+              disabled={loading}
+              className="btn-primary flex items-center justify-center space-x-2 py-2 px-4"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Seeding Perks...</span>
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4" />
+                  <span>Seed Perks Only</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={seedAbilitiesOnly}
+              disabled={loading}
+              className="btn-primary flex items-center justify-center space-x-2 py-2 px-4"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Seeding Abilities...</span>
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4" />
+                  <span>Seed Abilities Only</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
 
@@ -371,6 +460,7 @@ const DataSeeder: React.FC = () => {
               <li>• {seedData.cultures.length} Cultures (Nomadic, Rural, Wilderness, etc.)</li>
               <li>• {seedData.careers.length} Careers (Warrior, Scholar, Merchant, etc.)</li>
               <li>• {seedData.traits.length} Traits (Silver Tongue, Barbed Tail, Beast Legs, etc.)</li>
+              <li>• {seedData.perks.length} Perks (Brawny, Camouflage Hunter, Danger Sense, etc.)</li>
               <li>• {seedData.kits.length} Kits (Soldier, Scholar, Trader, etc.)</li>
               <li>• {seedData.characterClasses.length} Character Classes (Fighter, Mage, Rogue, etc.)</li>
               <li>• {seedData.abilities.length} Abilities (Combat Mastery, Arcane Insight, etc.)</li>
