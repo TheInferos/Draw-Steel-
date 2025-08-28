@@ -22,12 +22,6 @@ public class TraitController extends BaseController<Trait> {
         this.traitService = traitService;
     }
     
-    @GetMapping("/ancestry/{ancestryId}")
-    public ResponseEntity<List<Trait>> getTraitsByAncestry(@PathVariable UUID ancestryId) {
-        List<Trait> traits = traitService.getTraitsByAncestryId(ancestryId);
-        return ResponseEntity.ok(traits);
-    }
-    
     @GetMapping("/cost/{cost}")
     public ResponseEntity<List<Trait>> getTraitsByCost(@PathVariable Integer cost) {
         List<Trait> traits = traitService.getTraitsByCost(cost);

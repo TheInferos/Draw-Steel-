@@ -26,10 +26,6 @@ public class Trait extends BaseModel {
     @Column(columnDefinition = "TEXT")
     private String effect;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ancestry_id")
-    private Ancestry ancestry;
-    
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "trait_abilities",
