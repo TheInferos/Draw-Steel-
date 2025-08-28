@@ -25,10 +25,6 @@ public class TraitService extends BaseServiceImpl<Trait, TraitRepository> {
     // Only keep the custom methods that aren't in the base service
     // All basic CRUD (create, update, delete, getById, getAll) are inherited
     
-    public List<Trait> getTraitsByAncestryId(UUID ancestryId) {
-        return repository.findByAncestryId(ancestryId);
-    }
-    
     public List<Trait> getTraitsByCost(Integer cost) {
         return repository.findByCost(cost);
     }

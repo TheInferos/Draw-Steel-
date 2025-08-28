@@ -1,14 +1,44 @@
 [
-  { "name": "Devil" },
-  { "name": "Dragon Knight" },
-  { "name": "Dwarf" },
-  { "name": "Wood Elf" },
-  { "name": "High Elf" },
-  { "name": "Hakaan" },
-  { "name": "Human" },
-  { "name": "Memonek" },
-  { "name": "Orc" },
-  { "name": "Polder" },
-  { "name": "Revenant" },
-  { "name": "Time Raider" }
+  { 
+    "name": "Devil", 
+    "traits": [
+      "08b6ba57-93c9-4b2a-a80d-34d81d59adda", 
+      "9df05558-81d7-4f55-899b-59ad685d81ea", 
+      "e794fdf0-c326-4d91-bbb3-104d3024f837",
+      "d459ff00-a332-4d29-a6f1-1d9968d42bda"
+    ] 
+  },
+  { 
+    "name": "Dragon Knight",
+    "traits": [
+    ] 
+  },
+  { "name": "Dwarf",
+    "traits": [
+    ] 
+  },
+  { "name": "Wood Elf",
+    "traits": [
+    ] 
+  },
+  { "name": "High Elf",
+    "traits": [
+    ] 
+  },
+  { "name": "Hakaan",
+    "traits": [
+    ] 
+  },
+  { "name": "Human",
+    "traits": [
+    ] 
+  },
+  { "name": "Orc",
+    "traits": [
+    ] 
+  },
+  { "name": "Polder",
+    "traits": [
+    ] 
+  }
 ]

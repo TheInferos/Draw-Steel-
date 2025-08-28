@@ -6,6 +6,8 @@ import ancestriesData from '../data/ancestries.json';
 import abilitiesData from '../data/abilities.json';
 import traitsData from '../data/traits.json';
 import perksData from '../data/perks.json';
+import kitsData from '../data/kits.json';
+import complicationsData from '../data/complication.json';
 
 interface SeedData {
   abilities: Array<{ name: string; description?: string }>;
@@ -19,9 +21,24 @@ interface SeedData {
   careers: Array<{ name: string; description?: string, skills?: string[], skillGroups?: string[], quickBuild?: string[], incitingIncidents?: string[], renown?: number, wealth?: number, projectPoints?: number }>;
   traits: Array<{ name: string; description?: string; cost?: number; signatureToggle?: boolean }>;
   perks: Array<{ name: string; description?: string; type?: string }>;
-  kits: Array<{ name: string; description?: string }>;
+  kits: Array<{ 
+    name: string; 
+    description: string; 
+    stamina: number; 
+    speed: number; 
+    meleeDamage: { TIER1: number; TIER2: number; TIER3: number }; 
+    disengage: number; 
+    signatureAbility: { id: string }; 
+    armor: string; 
+    weapon: string 
+  }>;
   characterClasses: Array<{ name: string; description?: string }>;
-  complications: Array<{ name: string; description?: string }>;
+  complications: Array<{ 
+    name: string; 
+    description: string; 
+    benefit: string; 
+    drawback: string 
+  }>;
 }
 
 const DataSeeder: React.FC = () => {
@@ -36,13 +53,6 @@ const DataSeeder: React.FC = () => {
     careers: careersData,
     traits: traitsData,
     perks: perksData,
-    kits: [
-      { name: 'Soldier', description: 'Military training and equipment.' },
-      { name: 'Scholar', description: 'Academic tools and research materials.' },
-      { name: 'Trader', description: 'Merchant supplies and trade goods.' },
-      { name: 'Craftsman', description: 'Tools and materials for crafting.' },
-      { name: 'Explorer', description: 'Survival gear and mapping tools.' }
-    ],
     characterClasses: [
       { name: 'Fighter', description: 'Masters of martial combat and physical prowess.' },
       { name: 'Mage', description: 'Wielders of arcane magic and mystical knowledge.' },
@@ -50,13 +60,8 @@ const DataSeeder: React.FC = () => {
       { name: 'Cleric', description: 'Divine servants who channel spiritual power.' },
       { name: 'Ranger', description: 'Wilderness experts who blend combat and nature magic.' }
     ],
-    complications: [
-      { name: 'Haunted Past', description: 'Troubled history that occasionally resurfaces.' },
-      { name: 'Social Stigma', description: 'Viewed with suspicion by certain groups.' },
-      { name: 'Physical Limitation', description: 'A permanent injury or condition.' },
-      { name: 'Addiction', description: 'Dependency on a substance or behavior.' },
-      { name: 'Family Obligation', description: 'Duties that conflict with personal goals.' }
-    ]
+    complications: complicationsData,
+    kits: kitsData
   };
 
   const seedCulturesOnly = async () => {
@@ -154,25 +159,89 @@ const DataSeeder: React.FC = () => {
     }
   };
 
+  const seedKitsOnly = async () => {
+    setLoading(true);
+    setResults({});
+
+    try {
+      await seedKits();
+      setResults({
+        overall: { success: true, message: 'Kits seeded successfully!' }
+      });
+    } catch (error) {
+      console.error('Kits seeding failed:', error);
+      setResults({
+        overall: { success: false, message: `Kits seeding failed: ${error}` }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+     const seedComplicationsOnly = async () => {
+     setLoading(true);
+     setResults({});
+
+     try {
+       await seedComplications();
+       setResults({
+         overall: { success: true, message: 'Complications seeded successfully!' }
+       });
+     } catch (error) {
+       console.error('Complications seeding failed:', error);
+       setResults({
+         overall: { success: false, message: `Complications seeding failed: ${error}` }
+       });
+     } finally {
+       setLoading(false);
+     }
+   };
+
+   const seedAncestriesOnly = async () => {
+     setLoading(true);
+     setResults({});
+
+     try {
+       await seedAncestries();
+       setResults({
+         overall: { success: true, message: 'Ancestries seeded successfully!' }
+       });
+     } catch (error) {
+       console.error('Ancestries seeding failed:', error);
+       setResults({
+         overall: { success: false, message: `Ancestries seeding failed: ${error}` }
+       });
+     } finally {
+       setLoading(false);
+     }
+   };
+
   const seedDataToDatabase = async () => {
     setLoading(true);
     setResults({});
 
     try {
-      // Seed each data type
-      const seedPromises = [
-        seedAncestries(),
-        seedCultures(),
-        seedCareers(),
-        seedTraits(),
-        seedPerks(),
-        seedKits(),
-        seedCharacterClasses(),
-        seedAbilities(),
-        seedComplications()
-      ];
-
-      await Promise.all(seedPromises);
+      console.log('Starting to seed all data in dependency order...');
+      
+      // Sort groups by dependencies (topological sort)
+      const sortedGroups = sortGroupsByDependencies(seedingGroups);
+      
+      for (const group of sortedGroups) {
+        console.log(`Seeding group: ${group.name} (${group.id})`);
+        
+        // Run all seed functions in this group concurrently
+        const groupPromises = group.seedFunctions.map(seedFunc => seedFunc());
+        await Promise.all(groupPromises);
+        
+        console.log(`Completed seeding group: ${group.name}`);
+        
+        // Small delay between groups to ensure database consistency
+        if (group.id !== sortedGroups[sortedGroups.length - 1].id) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+      
+      console.log('All seeding completed successfully');
       setResults({
         overall: { success: true, message: 'All data seeded successfully!' }
       });
@@ -180,6 +249,91 @@ const DataSeeder: React.FC = () => {
       console.error('Seeding failed:', error);
       setResults({
         overall: { success: false, message: `Seeding failed: ${error}` }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper function to sort groups by dependencies
+  const sortGroupsByDependencies = (groups: typeof seedingGroups) => {
+    const result: typeof seedingGroups = [];
+    const visited = new Set<string>();
+    const visiting = new Set<string>();
+
+    const visit = (groupId: string) => {
+      if (visiting.has(groupId)) {
+        throw new Error(`Circular dependency detected: ${groupId}`);
+      }
+      if (visited.has(groupId)) return;
+
+      visiting.add(groupId);
+      const group = groups.find(g => g.id === groupId);
+      if (group) {
+        for (const dep of group.dependencies) {
+          visit(dep);
+        }
+        visiting.delete(groupId);
+        visited.add(groupId);
+        result.push(group);
+      }
+    };
+
+    for (const group of groups) {
+      if (!visited.has(group.id)) {
+        visit(group.id);
+      }
+    }
+
+    return result;
+  };
+
+  // Function to seed specific groups
+  const seedSpecificGroups = async (groupIds: string[]) => {
+    setLoading(true);
+    setResults({});
+
+    try {
+      console.log(`Starting to seed specific groups: ${groupIds.join(', ')}`);
+      
+      // Filter groups to only include requested ones and their dependencies
+      const requiredGroups = new Set<string>();
+      const addGroupAndDeps = (groupId: string) => {
+        requiredGroups.add(groupId);
+        const group = seedingGroups.find(g => g.id === groupId);
+        if (group) {
+          for (const dep of group.dependencies) {
+            addGroupAndDeps(dep);
+          }
+        }
+      };
+      
+      groupIds.forEach(addGroupAndDeps);
+      
+      const groupsToSeed = seedingGroups.filter(g => requiredGroups.has(g.id));
+      const sortedGroups = sortGroupsByDependencies(groupsToSeed);
+      
+      for (const group of sortedGroups) {
+        console.log(`Seeding group: ${group.name} (${group.id})`);
+        
+        const groupPromises = group.seedFunctions.map(seedFunc => seedFunc());
+        await Promise.all(groupPromises);
+        
+        console.log(`Completed seeding group: ${group.name}`);
+        
+        if (group.id !== sortedGroups[sortedGroups.length - 1].id) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+      
+      console.log('Selected groups seeded successfully');
+      setResults({
+        overall: { success: true, message: `Groups ${groupIds.join(', ')} seeded successfully!` }
+      });
+    } catch (error) {
+      console.error('Group seeding failed:', error);
+      setResults({
+        overall: { success: false, message: `Group seeding failed: ${error}` }
       });
     } finally {
       setLoading(false);
@@ -269,11 +423,16 @@ const DataSeeder: React.FC = () => {
   const seedKits = async () => {
     try {
       for (const kit of seedData.kits) {
-        await fetch('/api/kits', {
+        const response = await fetch('/api/kits', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(kit)
         });
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Kit seeding failed with status:', response.status, errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
       }
       setResults(prev => ({ ...prev, kits: { success: true, message: 'Kits seeded' } }));
     } catch (error) {
@@ -329,6 +488,38 @@ const DataSeeder: React.FC = () => {
       throw error;
     }
   };
+
+  // Define seeding groups with dependencies
+  const seedingGroups = [
+    {
+      id: 'base',
+      name: 'Base Data',
+      description: 'Core game data that other groups depend on',
+      seedFunctions: [seedCultures, seedCareers, seedTraits, seedPerks, seedCharacterClasses, seedComplications],
+      dependencies: []
+    },
+    {
+      id: 'abilities',
+      name: 'Abilities',
+      description: 'Character abilities and powers',
+      seedFunctions: [seedAbilities],
+      dependencies: ['base']
+    },
+    {
+      id: 'kits',
+      name: 'Kits',
+      description: 'Character kits that reference abilities',
+      seedFunctions: [seedKits],
+      dependencies: ['abilities']
+    },
+    {
+      id: 'ancestries',
+      name: 'Ancestries',
+      description: 'Character ancestries/races',
+      seedFunctions: [seedAncestries],
+      dependencies: ['base', 'traits']
+    }
+  ];
 
   const renderResult = (key: string, result: { success: boolean; message: string }) => (
     <div key={key} className={`flex items-center space-x-2 p-2 rounded ${
@@ -444,6 +635,60 @@ const DataSeeder: React.FC = () => {
                 </>
               )}
             </button>
+
+            <button
+              onClick={seedKitsOnly}
+              disabled={loading}
+              className="btn-primary flex items-center justify-center space-x-2 py-2 px-4"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Seeding Kits...</span>
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4" />
+                  <span>Seed Kits Only</span>
+                </>
+              )}
+            </button>
+
+                         <button
+               onClick={seedComplicationsOnly}
+               disabled={loading}
+               className="btn-primary flex items-center justify-center space-x-2 py-2 px-4"
+             >
+               {loading ? (
+                 <>
+                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                   <span>Seeding Complications...</span>
+                 </>
+               ) : (
+                 <>
+                   <Database className="h-4 w-4" />
+                   <span>Seed Complications Only</span>
+                 </>
+               )}
+             </button>
+
+             <button
+               onClick={seedAncestriesOnly}
+               disabled={loading}
+               className="btn-primary flex items-center justify-center space-x-2 py-2 px-4"
+             >
+               {loading ? (
+                 <>
+                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                   <span>Seeding Ancestries...</span>
+                 </>
+               ) : (
+                 <>
+                   <Database className="h-4 w-4" />
+                   <span>Seed Ancestries Only</span>
+                 </>
+               )}
+             </button>
           </div>
         </div>
 
@@ -469,6 +714,28 @@ const DataSeeder: React.FC = () => {
           </div>
         </div>
 
+        <div className="mb-6">
+          <h3 className="font-semibold text-secondary-900 mb-3">Group-based Seeding:</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {seedingGroups.map((group) => (
+              <button
+                key={group.id}
+                onClick={() => seedSpecificGroups([group.id])}
+                disabled={loading}
+                className="btn-secondary flex flex-col items-start p-3 text-left"
+              >
+                <span className="font-semibold">{group.name}</span>
+                <span className="text-sm text-secondary-600">{group.description}</span>
+                {group.dependencies.length > 0 && (
+                  <span className="text-xs text-blue-600 mt-1">
+                    Depends on: {group.dependencies.join(', ')}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <button
           onClick={seedDataToDatabase}
           disabled={loading}
@@ -482,7 +749,7 @@ const DataSeeder: React.FC = () => {
           ) : (
             <>
               <Save className="h-5 w-5" />
-              <span>Seed Database</span>
+              <span>Seed All Groups</span>
             </>
           )}
         </button>

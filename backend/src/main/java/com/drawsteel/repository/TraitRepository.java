@@ -9,8 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface TraitRepository extends JpaRepository<Trait, UUID> {
-
-    List<Trait> findByAncestryId(UUID ancestryId);
     
     List<Trait> findByCost(Integer cost);
     

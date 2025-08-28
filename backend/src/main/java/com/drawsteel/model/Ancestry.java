@@ -11,9 +11,11 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Ancestry extends BaseModel {
     
-    @Column(nullable = false)
-    private Integer baseHealth;
-    
-    @OneToMany(mappedBy = "ancestry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "ancestry_traits",
+        joinColumns = @JoinColumn(name = "ancestry_id"),
+        inverseJoinColumns = @JoinColumn(name = "trait_id")
+    )
     private List<Trait> traits;
 }
